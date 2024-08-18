@@ -20,7 +20,7 @@ export const useBlinkingEffect = () => {
       }, 400); // Open eyes after second blink
     };
 
-    const getRandomInterval = () => Math.random() * 8000 + 2000; // Random interval between 2s and 10s
+    const getRandomInterval = () => Math.random() * 5000 + 1000; // Random interval
 
     const startBlinking = () => {
       blinkTwice();
