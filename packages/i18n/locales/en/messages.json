@@ -1,11 +1,11 @@
 {
   "extensionDescription": {
-    "description": "Extension description",
-    "message": "Chrome extension boilerplate developed with Vite, React and Typescript"
+    "description": "KSPR Wallet for Kaspa KRC20 Tokens",
+    "message": "Chrome extension KSPR Wallet for Kaspa KRC20 Tokens developed with Vite, React and Typescript"
   },
   "extensionName": {
-    "description": "Extension name",
-    "message": "Chrome extension boilerplate"
+    "description": "KSPR Wallet",
+    "message": "Chrome extension for KSPR Wallet"
   },
   "toggleTheme": {
     "message": "Toggle theme"
