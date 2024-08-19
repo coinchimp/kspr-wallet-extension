@@ -24,20 +24,24 @@ const Popup = () => {
     <div className={`App ${isLight ? 'bg-slate-50' : 'bg-gray-900'}`}>
       <header className={`App-header ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>
         {/* Top legend */}
-        <div className={`flex justify-between items-center p-2`}>
-          <div className="text-center w-full">
-            <h1 className={`text-3xl font-extrabold ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>KSPR</h1>
+        <div className={`fixed top-0 left-0 w-full z-10 bg-transparent`}>
+          {/* Top legend and question mark */}
+          <div className={`flex justify-between items-center p-2`}>
+            <div className="text-center w-full">
+              <h1 className={`text-3xl font-extrabold ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>KSPR</h1>
+            </div>
+            <div className="absolute right-4">
+              <button
+                className={`p-2 rounded-full ${isLight ? 'bg-slate-50 text-gray-900' : 'bg-gray-800 text-gray-100'} 
+                  border border-transparent hover:border-current`}>
+                ?
+              </button>
+            </div>
           </div>
-          <div className="absolute right-4">
-            <button
-              className={`p-2 rounded-full ${isLight ? 'bg-slate-50 text-gray-900' : 'bg-gray-800 text-gray-100'} 
-                border border-transparent hover:border-current`}>
-              ?
-            </button>
-          </div>
+          {/* Fine line below the legend */}
+          <div className={`border-t-2 w-full ${isLight ? 'border-gray-900' : 'border-gray-100'}`} />
         </div>
-        {/* Fine line */}
-        <div className={`border-t-2 w-full ${isLight ? 'border-gray-900' : 'border-gray-100'} my-4`} />
+        {/* Content below the legend */}
         <section
           style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' }}>
           <SvgComponent isLight={isLight} isEyesOpen={isEyesOpen} />
