@@ -1,0 +1,14 @@
+{
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "*.viewConfig"
+            ],
+            "schema": false,
+            "url": "file:///Users/pinrojas/.vscode/extensions/nokia.nokia-intent-manager-3.1.0/media/viewconfig-schema.json"
+        }
+    ],
+    "files.associations": {
+        "/*_v*/views/*": "json"
+    }
+}

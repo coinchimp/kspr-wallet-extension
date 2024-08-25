@@ -6,6 +6,8 @@ import Unlock from '@src/components/screens/Unlock';
 import Main from '@src/components/screens/Main';
 import Start from '@src/components/screens/Start';
 import Secret from '@src/components/screens/Secret';
+import Secret2 from '@src/components/screens/Secret2';
+import Import from '@src/components/screens/Import';
 
 const Popup = () => {
   const theme = useStorageSuspense(exampleThemeStorage);
@@ -38,8 +40,10 @@ const Popup = () => {
         <section
           style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' }}>
           {/* {!isUnlocked ? <Unlock onUnlock={() => setIsUnlocked(true)} isLight={isLight} /> : <Main isLight={isLight} />} */}
-          {/* <Start isLight={isLight} /> */}
-          <Secret isLight={isLight} />
+          {/* <Start isLight={isLight} /> */} {/* Start new wallet: choose a new secret prahse or import one */}
+          {/* <Secret isLight={isLight} /> */} {/* Create New 24-words Secret Phrase */}
+          {/* <Secret2 isLight={isLight} /> */} {/* Validate New 24-words Secret Phrase */}
+          <Import isLight={isLight} /> {/* Import 24-words Secret Phrase */}
         </section>
 
         <ToggleButton>Toggle theme</ToggleButton>
@@ -56,7 +60,7 @@ const ToggleButton = (props: ComponentPropsWithoutRef<'button'>) => {
       className={
         props.className +
         ' ' +
-        'font-bold mt-4 py-1 px-4 rounded shadow hover:scale-105 ' +
+        'font-bold mt-2 py-1 px-4 rounded shadow hover:scale-105 ' +
         (theme === 'light' ? 'bg-white text-black shadow-black' : 'bg-black text-white')
       }
       onClick={exampleThemeStorage.toggle}>

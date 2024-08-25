@@ -47,25 +47,26 @@ const Secret: React.FC<{ isLight: boolean }> = ({ isLight }) => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full">
-      <h2 className={`text-xl font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'} mb-4`}>
-        New Wallet: 24-words Secret Phrase
+      <h2 className={`text-lg font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'} mb-6 mt-4`}>
+        24-words Secret Phrase
       </h2>
 
-      <div className="grid grid-cols-3 gap-2 justify-left mb-2">
+      <div className="grid grid-cols-3 gap-2 mb-8">
         {secretWords.map((word, index) => (
-          <div key={index} className="text-base font-medium">
+          <div key={index} className="text-sm font-medium text-left">
             {index + 1}. {word}
           </div>
         ))}
       </div>
 
-      <div className="flex items-center mb-2">
+      <div className="flex items-center justify-center mb-4 w-[85%]">
         <input
           type="checkbox"
           id="verify"
           checked={isVerified}
           onChange={e => setIsVerified(e.target.checked)}
-          className="mr-2"
+          className="mr-2 h-4 w-4 rounded border-gray-300 text-[#70C7BA] focus:ring-[#70C7BA]"
+          style={{ accentColor: '#70C7BA' }} // For some browsers, ensures the correct fill color when checked
         />
         <label
           htmlFor="verify"
