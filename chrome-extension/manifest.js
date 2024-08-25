@@ -38,27 +38,30 @@ const manifest = deepmerge(
       default_popup: 'popup/index.html',
       default_icon: 'icon-34.png',
     },
-    chrome_url_overrides: {
-      newtab: 'new-tab/index.html',
+    // chrome_url_overrides: {
+    //   newtab: 'new-tab/index.html',
+    // },
+    content_security_policy: {
+      extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';",
     },
     icons: {
       128: 'icon-128.png',
     },
-    content_scripts: [
-      {
-        matches: ['http://*/*', 'https://*/*', '<all_urls>'],
-        js: ['content/index.iife.js'],
-      },
-      {
-        matches: ['http://*/*', 'https://*/*', '<all_urls>'],
-        js: ['content-ui/index.iife.js'],
-      },
-      {
-        matches: ['http://*/*', 'https://*/*', '<all_urls>'],
-        css: ['content.css'], // public folder
-      },
-    ],
-    devtools_page: 'devtools/index.html',
+    // content_scripts: [
+    //   {
+    //     matches: ['http://*/*', 'https://*/*', '<all_urls>'],
+    //     js: ['content/index.iife.js'],
+    //   },
+    //   {
+    //     matches: ['http://*/*', 'https://*/*', '<all_urls>'],
+    //     js: ['content-ui/index.iife.js'],
+    //   },
+    //   {
+    //     matches: ['http://*/*', 'https://*/*', '<all_urls>'],
+    //     css: ['content.css'], // public folder
+    //   },
+    // ],
+    // devtools_page: 'devtools/index.html',
     web_accessible_resources: [
       {
         resources: ['*.js', '*.css', '*.svg', 'icon-128.png', 'icon-34.png'],
