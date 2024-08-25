@@ -4,6 +4,8 @@ import { exampleThemeStorage } from '@extension/storage';
 import { ComponentPropsWithoutRef, useState } from 'react';
 import Unlock from '@src/components/screens/Unlock';
 import Main from '@src/components/screens/Main';
+import Start from '@src/components/screens/Start';
+import Secret from '@src/components/screens/Secret';
 
 const Popup = () => {
   const theme = useStorageSuspense(exampleThemeStorage);
@@ -35,7 +37,9 @@ const Popup = () => {
 
         <section
           style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' }}>
-          {!isUnlocked ? <Unlock onUnlock={() => setIsUnlocked(true)} isLight={isLight} /> : <Main isLight={isLight} />}
+          {/* {!isUnlocked ? <Unlock onUnlock={() => setIsUnlocked(true)} isLight={isLight} /> : <Main isLight={isLight} />} */}
+          {/* <Start isLight={isLight} /> */}
+          <Secret isLight={isLight} />
         </section>
 
         <ToggleButton>Toggle theme</ToggleButton>
