@@ -1,47 +1,26 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { generateMnemonic } from '../../../../../chrome-extension/utils/Kaspa';
+import { toast } from 'react-toastify';
 
-const Secret: React.FC<{ isLight: boolean }> = ({ isLight }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+const Secret: React.FC<{ isLight: boolean; onNextStep: (words: string[]) => void }> = ({ isLight, onNextStep }) => {
   const [isVerified, setIsVerified] = useState(false);
+  const [secretWords, setSecretWords] = useState<string[]>([]);
 
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.classList.remove('animate-shake', 'border-red-500');
-    }
-  }, [isLight]);
+    const generateAndSetMnemonic = async () => {
+      const mnemonic = await generateMnemonic(); // Await the mnemonic phrase
+      const words = mnemonic.split(' '); // Split the mnemonic phrase into individual words
+      setSecretWords(words); // Set the secretWords state with the generated words
+    };
 
-  const secretWords = [
-    'apple',
-    'banana',
-    'cherry',
-    'date',
-    'elder',
-    'fig',
-    'grape',
-    'honey',
-    'kiwi',
-    'lemon',
-    'mango',
-    'nectar',
-    'orange',
-    'papaya',
-    'quince',
-    'berry',
-    'straw',
-    'rhino',
-    'ugli',
-    'vanilla',
-    'melon',
-    'xigua',
-    'yam',
-    'chair',
-  ];
+    generateAndSetMnemonic(); // Call the async function
+  }, []);
 
   const handleNextStep = () => {
-    if (!isVerified) {
-      alert('You need to confirm you have securely stored your secret phrase.');
+    if (isVerified) {
+      onNextStep(secretWords);
     } else {
-      // proceed to the next step
+      toast.error('You need to confirm you have securely stored your secret phrase.');
     }
   };
 
@@ -66,7 +45,7 @@ const Secret: React.FC<{ isLight: boolean }> = ({ isLight }) => {
           checked={isVerified}
           onChange={e => setIsVerified(e.target.checked)}
           className="mr-2 h-4 w-4 rounded border-gray-300 text-[#70C7BA] focus:ring-[#70C7BA]"
-          style={{ accentColor: '#70C7BA' }} // For some browsers, ensures the correct fill color when checked
+          style={{ accentColor: '#70C7BA' }} // Ensures correct fill color when checked
         />
         <label
           htmlFor="verify"
