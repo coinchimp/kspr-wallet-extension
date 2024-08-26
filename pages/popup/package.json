@@ -21,7 +21,8 @@
     "@extension/shared": "workspace:*",
     "@extension/storage": "workspace:*",
     "@extension/content-runtime-script": "workspace:*",
-    "@types/node": "^20.14.10"
+    "@types/node": "^20.14.10",
+    "react-toastify": "10.0.5"
   },
   "devDependencies": {
     "@extension/tailwindcss-config": "workspace:*",
