@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { initKaspa, fetchBalance } from '../../../../../chrome-extension/utils/Kaspa';
+import { fetchBalance } from '../../../../../chrome-extension/utils/Kaspa';
 
 const Balance = () => {
   const [balance, setBalance] = useState<number | null>(null);
@@ -8,7 +8,6 @@ const Balance = () => {
   useEffect(() => {
     const getBalance = async () => {
       try {
-        await initKaspa();
         const balance = await fetchBalance(address);
         setBalance(balance);
       } catch (error) {
