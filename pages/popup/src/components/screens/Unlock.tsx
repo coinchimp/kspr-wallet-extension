@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import SvgComponent from '@src/components/SvgComponent';
 import { useBlinkingEffect } from '@src/hooks/useBlinkingEffect';
 import { toast } from 'react-toastify';
+import { decryptData } from '../../../../../chrome-extension/utils/Crypto';
+import { encryptedSeedStorage, passcodeStorage } from '@extension/storage';
 
 interface UnlockProps {
   onUnlock: (passcode: string) => void;
@@ -17,9 +19,30 @@ const Unlock: React.FC<UnlockProps> = ({ onUnlock, isLight, isSettingPasscode = 
   const inputRef = useRef<HTMLInputElement>(null);
   const isEyesOpen = useBlinkingEffect();
 
-  const handleUnlockWithPasscode = () => {
+  // Handle automatic unlocking if a valid passcode is stored
+  useEffect(() => {
+    const checkStoredPasscode = async () => {
+      try {
+        const storedPasscode = await passcodeStorage.getPasscode();
+        if (storedPasscode) {
+          const encryptedSeed = await encryptedSeedStorage.getSeed();
+          await decryptData(storedPasscode, encryptedSeed);
+          onUnlock(storedPasscode);
+        }
+      } catch (error) {
+        console.error('Error during auto-unlock:', error);
+      }
+    };
+
+    if (!isSettingPasscode) {
+      checkStoredPasscode();
+    }
+  }, [isSettingPasscode, onUnlock]);
+
+  const handleUnlockWithPasscode = async () => {
     if (isSettingPasscode) {
       if (passcode === confirmPasscode) {
+        await passcodeStorage.savePasscode(passcode); // Save the passcode for 5 minutes
         onUnlock(passcode);
       } else {
         setIsIncorrect(true);
@@ -27,7 +50,15 @@ const Unlock: React.FC<UnlockProps> = ({ onUnlock, isLight, isSettingPasscode = 
         setTimeout(() => setIsIncorrect(false), 500);
       }
     } else {
-      onUnlock(passcode);
+      try {
+        const encryptedSeed = await encryptedSeedStorage.getSeed();
+        await decryptData(passcode, encryptedSeed);
+        await passcodeStorage.savePasscode(passcode); // Save the passcode for 5 minutes
+        onUnlock(passcode);
+      } catch (error) {
+        setIsIncorrect(true);
+        setTimeout(() => setIsIncorrect(false), 500);
+      }
     }
   };
 

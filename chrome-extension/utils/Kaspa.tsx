@@ -126,13 +126,13 @@ export async function createAccounts(seed: string) {
     const addresses = compressedPublicKeys.map(key => createAddress(key, networkType).toString());
 
     // Initialize the private key generator
-    const privateKeyGenerator = new PrivateKeyGenerator(xPrv, false, BigInt(0));
+    // const privateKeyGenerator = new PrivateKeyGenerator(xPrv, false, BigInt(0));
 
     // Return the account information
     return compressedPublicKeys.map((key, index) => ({
       name: `Account #${index + 1}`,
       address: addresses[index],
-      privateKey: privateKeyGenerator.receiveKey(index).toString(),
+      // privateKey: privateKeyGenerator.receiveKey(index).toString(),
     }));
   } catch (error) {
     console.error('Error creating accounts:', error);

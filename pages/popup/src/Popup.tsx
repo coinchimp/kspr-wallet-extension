@@ -24,18 +24,15 @@ const Popup = () => {
   const isLight = theme === 'light';
 
   const [currentScreen, setCurrentScreen] = useState<Screen | null>(null);
-  const [passcode, setPasscode] = useState<string>(''); // State for passcode
-  const [secretWords, setSecretWords] = useState<string[]>([]); // State for secret words
+  const [passcode, setPasscode] = useState<string>('');
+  const [secretWords, setSecretWords] = useState<string[]>([]);
 
-  // Check for an existing seed in storage on component mount
   useEffect(() => {
     const checkForExistingSeed = async () => {
       const encryptedSeed = await encryptedSeedStorage.getSeed();
       if (encryptedSeed) {
-        console.log('Seed found in storage, navigating to Unlock screen');
         setCurrentScreen(Screen.Unlock);
       } else {
-        console.log('No seed found, navigating to Start screen');
         setCurrentScreen(Screen.Start);
       }
     };
@@ -44,80 +41,60 @@ const Popup = () => {
   }, []);
 
   const handleCreateWallet = () => {
-    console.log('Navigating to Secret screen');
     setCurrentScreen(Screen.Secret);
   };
 
   const handleImportWallet = () => {
-    console.log('Navigating to Import screen');
     setCurrentScreen(Screen.Import);
   };
 
   const handleSecretVerified = (words: string[]) => {
-    console.log('Secret Verified, navigating to Secret2 screen');
-    setSecretWords(words); // Store the generated secret words
+    setSecretWords(words);
     setCurrentScreen(Screen.Secret2);
   };
 
   const handleSecret2Finished = (passcode: string) => {
-    // Updated to accept a passcode
-    setPasscode(passcode); // Store the passcode
-    setCurrentScreen(Screen.Main); // Move to Main screen
+    setPasscode(passcode);
+    setCurrentScreen(Screen.Main);
   };
 
   const handleWalletImported = (importedPasscode: string) => {
-    console.log('Wallet Imported, navigating to Main screen');
-    setPasscode(importedPasscode); // Store the imported passcode
-    setCurrentScreen(Screen.Main); // Move to the Main screen
+    setPasscode(importedPasscode);
+    setCurrentScreen(Screen.Main);
   };
 
   const handleUnlock = (enteredPasscode: string) => {
-    setPasscode(enteredPasscode); // Store the passcode
-    console.log('Navigating to Main screen');
-    setCurrentScreen(Screen.Main); // Move to the Main screen
+    setPasscode(enteredPasscode);
+    setCurrentScreen(Screen.Main);
   };
 
   const renderScreen = () => {
-    console.log('Current screen:', currentScreen); // Log the current screen
     switch (currentScreen) {
       case Screen.Start:
         return <Start isLight={isLight} onCreateWallet={handleCreateWallet} onImportWallet={handleImportWallet} />;
       case Screen.Secret:
-        return (
-          <Secret
-            isLight={isLight}
-            onNextStep={handleSecretVerified} // Pass handleSecretVerified to get the secret words
-          />
-        );
+        return <Secret isLight={isLight} onNextStep={handleSecretVerified} />;
       case Screen.Secret2:
-        return (
-          <Secret2
-            isLight={isLight}
-            onFinish={handleSecret2Finished} // Pass handleSecret2Finished expecting a passcode
-            secretWords={secretWords} // Pass the stored secret words to Secret2
-          />
-        );
+        return <Secret2 isLight={isLight} onFinish={handleSecret2Finished} secretWords={secretWords} />;
       case Screen.Import:
         return <Import isLight={isLight} onImport={handleWalletImported} />;
       case Screen.Unlock:
         return (
           <Unlock
             isLight={isLight}
-            onUnlock={handleUnlock} // Pass handleUnlock to get the passcode
-            isSettingPasscode={false} // Default to entering a passcode
-            onForgotPassword={() => setCurrentScreen(Screen.Import)} // Navigate to Import screen on forgot password
+            onUnlock={handleUnlock}
+            isSettingPasscode={false}
+            onForgotPassword={() => setCurrentScreen(Screen.Import)}
           />
         );
       case Screen.Main:
-        console.log('Rendering Main screen with passcode:', passcode);
-        return <Main isLight={isLight} passcode={passcode} />; // Pass the passcode to Main
+        return <Main isLight={isLight} passcode={passcode} />;
       default:
         return null;
     }
   };
 
   if (currentScreen === null) {
-    // Return a loading state while checking for the seed
     return <div>Loading...</div>;
   }
 
