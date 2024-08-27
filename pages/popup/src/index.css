@@ -17,3 +17,15 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+/* Hide the scrollbar for all elements */
+body,
+html {
+  overflow-y: scroll; /* Ensures content can still scroll */
+  scrollbar-width: none; /* For Firefox */
+}
+
+body::-webkit-scrollbar,
+html::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
