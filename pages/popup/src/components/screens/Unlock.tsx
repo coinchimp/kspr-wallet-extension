@@ -105,7 +105,7 @@ const Unlock: React.FC<UnlockProps> = ({ onUnlock, isLight, isSettingPasscode = 
           inputRef.current?.blur();
           handleUnlockWithPasscode();
         }}>
-        {isSettingPasscode ? 'SET PASSCODE' : 'UNLOCK'}
+        {isSettingPasscode ? 'Set Passcode' : 'Unlock'}
       </button>
     </div>
   );

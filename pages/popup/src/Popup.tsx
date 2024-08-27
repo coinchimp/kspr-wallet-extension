@@ -144,7 +144,14 @@ const Popup = () => {
         </div>
 
         <section
-          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' }}>
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            width: '100%',
+            paddingTop: '72px',
+          }}>
           {renderScreen()}
         </section>
 
