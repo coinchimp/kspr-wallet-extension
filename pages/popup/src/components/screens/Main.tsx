@@ -6,10 +6,11 @@ import { encryptedSeedStorage } from '@extension/storage';
 
 const exchangeRate = 0.168; // $KAS to USD exchange rate
 const tokens = [
-  { name: 'Kaspa', symbol: 'KAS', balance: 1200, change24h: -1.23 },
-  { name: 'KSPR', symbol: 'KSPR', balance: 5000, change24h: 2.45 },
-  { name: 'Nacho', symbol: 'NACHO', balance: 300, change24h: -0.75 },
-  { name: 'Kasper', symbol: 'KSPER', balance: 10000, change24h: 4.67 },
+  { name: 'Kaspa', symbol: 'KAS', balance: 1200, exchangeRate: 0.17, change24h: -1.23 },
+  { name: 'KSPR', symbol: 'KSPR', balance: 50000, exchangeRate: 1.2, change24h: 2.45 },
+  { name: 'Nacho', symbol: 'NACHO', balance: 200, exchangeRate: 10, change24h: -0.75 },
+  { name: 'Kasper', symbol: 'KASPER', balance: 10000000, exchangeRate: 0.00000123, change24h: 4.67 },
+  { name: 'Chimp', symbol: 'CHIMP', balance: 10000, exchangeRate: 0.00312, change24h: 41.67 },
 ];
 
 const accounts = [
@@ -18,6 +19,23 @@ const accounts = [
   { name: 'Account 3', address: 'kaspa:qz0a4...someaddress3' },
 ];
 
+const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+  const maxIndex = 2; // Maximum index you want to support
+
+  const getRandomIndex = () => {
+    return Math.floor(Math.random() * maxIndex) + 1; // Generate a random index between 1 and maxIndex
+  };
+
+  const tryNextImage = () => {
+    const randomIndex = getRandomIndex();
+    e.currentTarget.src = `/popup/ksprwallet${randomIndex}.png`;
+    e.currentTarget.onerror = null; // Prevent infinite loop if all images fail
+  };
+
+  e.currentTarget.onerror = tryNextImage; // Set the onError to try the next image
+  tryNextImage(); // Start the process
+};
+
 const Main: React.FC<{ isLight: boolean; passcode: string }> = ({ isLight, passcode }) => {
   const [accountAddress, setAccountAddress] = useState<string>('');
   const [kaspaBalance, setKaspaBalance] = useState<number>(tokens[0].balance);
@@ -25,9 +43,9 @@ const Main: React.FC<{ isLight: boolean; passcode: string }> = ({ isLight, passc
   const [selectedAccount, setSelectedAccount] = useState(accounts[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const totalUSD = tokens.reduce((sum, token) => sum + token.balance * exchangeRate, 0);
+  const totalUSD = tokens.reduce((sum, token) => sum + token.balance * token.exchangeRate, 0);
   const totalChange24h =
-    tokens.reduce((sum, token) => sum + token.change24h * token.balance * exchangeRate, 0) / totalUSD;
+    tokens.reduce((sum, token) => sum + token.change24h * token.balance * token.exchangeRate, 0) / totalUSD;
 
   useEffect(() => {
     const loadAccountAddress = async () => {
@@ -89,12 +107,12 @@ const Main: React.FC<{ isLight: boolean; passcode: string }> = ({ isLight, passc
           </div>
 
           <button
-            className="ml-2 hover:scale-105 "
+            className="ml-2 hover:scale-105"
             onClick={() => {
               navigator.clipboard.writeText(selectedAccount.address);
               console.log(`Copied address: ${selectedAccount.address}`);
             }}>
-            <img src="/icons/copy.svg" alt="Copy Address" className="h-5 w-5" />
+            <img src="/popup/icons/copy.svg" alt="Copy Address" className="h-6 w-6" />
           </button>
         </div>
         {/* Total Balance */}
@@ -111,7 +129,7 @@ const Main: React.FC<{ isLight: boolean; passcode: string }> = ({ isLight, passc
           <div key={index} className="flex flex-col items-center ">
             <div
               className={`rounded-full p-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}>
-              <img src={`/icons/${action.toLowerCase()}.svg`} alt={action} className="h-8 w-8" />
+              <img src={`/popup/icons/${action.toLowerCase()}.svg`} alt={action} className="h-8 w-8" />
             </div>
             <p className={`text-sm ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>{action}</p>
           </div>
@@ -125,17 +143,26 @@ const Main: React.FC<{ isLight: boolean; passcode: string }> = ({ isLight, passc
             key={index}
             className={`flex justify-between items-center p-4 rounded-lg  ${isLight ? 'bg-gray-100' : 'bg-gray-800'} transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}>
             <div className="flex items-center space-x-4">
-              <img src={`/logos/${token.symbol.toLowerCase()}.svg`} alt={token.name} className="h-8 w-8" />
+              <img
+                src={`/popup/${token.symbol.toLowerCase()}.png`}
+                alt={token.name}
+                className="h-9 w-9"
+                onError={handleImageError}
+              />
+
               <div>
-                <h3 className={`text-lg font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>{token.name}</h3>
-                <p className={`text-sm ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
+                <h3 className={`text-base text-left font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
+                  {token.name}
+                </h3>
+                <p className={`text-xs ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
                   {token.balance.toFixed(2)} {token.symbol}
                 </p>
               </div>
             </div>
+
             <div className="text-right">
-              <h3 className={`text-lg font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
-                ${(token.balance * exchangeRate).toFixed(2)}
+              <h3 className={`text-sm font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
+                ${(token.balance * token.exchangeRate).toFixed(2)}
               </h3>
               <p className={`text-sm ${token.change24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                 {token.change24h >= 0 ? '+' : ''}
