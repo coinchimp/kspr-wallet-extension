@@ -18,10 +18,12 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@extension/content-runtime-script": "workspace:*",
     "@extension/shared": "workspace:*",
     "@extension/storage": "workspace:*",
-    "@extension/content-runtime-script": "workspace:*",
     "@types/node": "^20.14.10",
+    "qrcode.react": "^4.0.1",
+    "react-qr-code": "^2.0.15",
     "react-toastify": "10.0.5"
   },
   "devDependencies": {
