@@ -34,9 +34,16 @@ const tokens: Token[] = [
   { name: 'Chimp', symbol: 'CHIMP', balance: 10000, exchangeRate: 0.00312, change24h: 41.67 },
 ];
 
-const Send1: React.FC<{ isLight: boolean; passcode: string; onBack: () => void }> = ({ isLight, passcode, onBack }) => {
+const Send1: React.FC<{
+  isLight: boolean;
+  passcode: string;
+  onBack: () => void;
+  onNext: (token: Token, amount: number, recipientAddress: string) => void;
+}> = ({ isLight, passcode, onBack, onNext }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
+  const [amount, setAmount] = useState<number>(0);
+  const [recipientAddress, setRecipientAddress] = useState('');
 
   const filteredTokens = tokens.filter(
     token =>
@@ -72,39 +79,46 @@ const Send1: React.FC<{ isLight: boolean; passcode: string; onBack: () => void }
         {/* start - send form */}
         <div className="mb-2 text-lg">
           {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
-            selectedToken.balance * selectedToken.exchangeRate,
+            amount * selectedToken.exchangeRate,
           )}
         </div>
 
         <div className="w-full mb-4 relative">
-          <input
-            type="number"
-            placeholder="Amount"
-            className={`w-full p-2 pr-16 rounded ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
-          />
-          <button
-            className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-sm font-bold p-1 ${isLight ? 'text-gray-900' : 'text-gray-200'}`}
-            onClick={() => {
-              const amountInput = document.querySelector('input[type="number"]') as HTMLInputElement | null;
-              if (amountInput) {
-                amountInput.value = selectedToken.balance.toFixed(2);
-              }
-            }}>
-            Max
-          </button>
+          <div className="relative w-full mb-4">
+            <input
+              type="number"
+              placeholder="Amount"
+              className={`w-full p-2 pr-16 rounded ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
+              value={amount}
+              onChange={e => setAmount(parseFloat(e.target.value) || 0)} // Update amount state on change
+            />
+            <button
+              className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-sm font-bold p-2 ${isLight ? 'text-gray-900' : 'text-gray-200'}`}
+              onClick={() => {
+                setAmount(selectedToken.balance); // Set the max amount on button click
+              }}>
+              Max
+            </button>
+          </div>
         </div>
 
         <input
           type="text"
           placeholder="Recipient Wallet Address"
+          value={recipientAddress}
           className={`w-full p-2 mb-4 rounded ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
+          onChange={e => setRecipientAddress(e.target.value)}
         />
 
         <button
-          className={`mt-4 w-full py-2 rounded-full ${isLight ? 'bg-gray-200 text-gray-900' : 'bg-gray-700 text-gray-200'} hover:scale-105 transition duration-300`}
+          className={
+            'mt-6 font-extrabold text-xl py-2 px-6 rounded shadow hover:scale-105 text-white w-[85%] ' +
+            (isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white')
+          }
           onClick={() => {
-            // Handle the next button click (example functionality)
-            console.log('Next button clicked');
+            if (selectedToken && amount > 0 && recipientAddress) {
+              onNext(selectedToken, amount, recipientAddress); // Pass the selected token, amount, and recipient address to onNext
+            }
           }}>
           Next
         </button>
