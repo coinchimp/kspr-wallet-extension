@@ -8,7 +8,7 @@ import Start from '@src/components/screens/Start';
 import Secret from '@src/components/screens/Secret';
 import Secret2 from '@src/components/screens/Secret2';
 import Import from '@src/components/screens/Import';
-import Received from '@src/components/screens/Received';
+import Receive from '@src/components/screens/Receive';
 import Send1 from '@src/components/screens/Send1';
 import { encryptedSeedStorage } from '@extension/storage';
 
@@ -19,7 +19,7 @@ enum Screen {
   Import,
   Unlock,
   Main,
-  Received,
+  Receive,
   Send1,
 }
 
@@ -104,13 +104,20 @@ const Popup = () => {
             isLight={isLight}
             passcode={passcode}
             onSend={() => setCurrentScreen(Screen.Send1)}
-            onReceive={() => setCurrentScreen(Screen.Received)}
+            onReceive={() => setCurrentScreen(Screen.Receive)}
           />
         );
-      case Screen.Received:
-        return <Received isLight={isLight} selectedAccount={selectedAccount} passcode={passcode} />; // Pass selectedAccount and passcode
+      case Screen.Receive:
+        return (
+          <Receive
+            isLight={isLight}
+            selectedAccount={selectedAccount}
+            passcode={passcode}
+            onBack={() => setCurrentScreen(Screen.Main)}
+          />
+        ); // Pass selectedAccount and passcode
       case Screen.Send1:
-        return <Send1 isLight={isLight} passcode={passcode} />;
+        return <Send1 isLight={isLight} passcode={passcode} onBack={() => setCurrentScreen(Screen.Main)} />;
       default:
         return null;
     }

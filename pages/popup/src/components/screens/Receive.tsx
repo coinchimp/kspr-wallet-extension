@@ -6,16 +6,17 @@ import { decryptData } from '../../../../../chrome-extension/utils/Crypto';
 import { encryptedSeedStorage } from '@extension/storage';
 //import { useNavigate } from 'react-router-dom';
 
-type ReceivedProps = {
+type ReceiveProps = {
   isLight: boolean;
   selectedAccount: {
     name: string;
     address: string;
   };
   passcode: string;
+  onBack: () => void;
 };
 
-const Received: React.FC<ReceivedProps> = ({ isLight, selectedAccount, passcode }) => {
+const Receive: React.FC<ReceiveProps> = ({ isLight, selectedAccount, passcode, onBack }) => {
   //const navigate = useNavigate(); // Hook for navigation
   const [accountAddress, setAccountAddress] = useState<string>('');
   const handleCopyAddress = () => {
@@ -53,11 +54,21 @@ const Received: React.FC<ReceivedProps> = ({ isLight, selectedAccount, passcode 
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full p-4 pt-6">
+    <div className="flex flex-col items-center justify-center w-full h-full p-4 pt-4">
+      <button
+        className={`text-2xl p-4 w-12 h-12 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out rounded-full font-bold text-[#70C7BA] flex items-center justify-center`}
+        onClick={onBack} // Use onBack to navigate back to the main screen
+      >
+        ←
+      </button>
       <h1 className={`text-2xl font-bold mb-6 ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>Receive Address</h1>
 
       {/* QR Code */}
-      <QRCode value={selectedAccount.address} size={200} className="mb-6" />
+      <QRCode
+        value={selectedAccount.address}
+        size={160}
+        className={`mb-6 ${isLight ? 'bg-gray-200' : 'bg-white'} p-1 rounded-md`}
+      />
 
       {/* Wallet Address */}
       <div className="flex flex-col items-center">
@@ -65,18 +76,11 @@ const Received: React.FC<ReceivedProps> = ({ isLight, selectedAccount, passcode 
           {selectedAccount.address}
         </p>
         <button onClick={handleCopyAddress} className="hover:scale-105">
-          <img src="/popup/icons/copy.svg" alt="Copy Address" className="h-6 w-6" />
+          <img src="/popup/icons/copy.svg" alt="Copy Address" className="h-10 w-10" />
         </button>
       </div>
-
-      {/* Close Button */}
-      <button
-        className={`mt-10 px-6 py-2 rounded-full ${isLight ? 'bg-gray-200 text-gray-900' : 'bg-gray-700 text-gray-200'} hover:scale-105 transition duration-300`}
-        onClick={handleClose}>
-        Close
-      </button>
     </div>
   );
 };
 
-export default Received;
+export default Receive;
