@@ -8,6 +8,9 @@ import Start from '@src/components/screens/Start';
 import Secret from '@src/components/screens/Secret';
 import Secret2 from '@src/components/screens/Secret2';
 import Import from '@src/components/screens/Import';
+import Receive from '@src/components/screens/Receive';
+import Send1 from '@src/components/screens/Send1';
+import Send2 from '@src/components/screens/Send2';
 import { encryptedSeedStorage } from '@extension/storage';
 
 enum Screen {
@@ -17,7 +20,16 @@ enum Screen {
   Import,
   Unlock,
   Main,
+  Receive,
+  Send1,
+  Send2,
 }
+
+const accounts = [
+  { name: 'Account 1', address: 'kaspa:qz0a4...someaddress1' },
+  { name: 'Account 2', address: 'kaspa:qz0a4...someaddress2' },
+  { name: 'Account 3', address: 'kaspa:qz0a4...someaddress3' },
+];
 
 const Popup = () => {
   const theme = useStorageSuspense(exampleThemeStorage);
@@ -26,6 +38,10 @@ const Popup = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen | null>(null);
   const [passcode, setPasscode] = useState<string>('');
   const [secretWords, setSecretWords] = useState<string[]>([]);
+  const [selectedAccount, setSelectedAccount] = useState(accounts[0]); // Add this line
+  const [selectedToken, setSelectedToken] = useState<any>(null);
+  const [amount, setAmount] = useState<number>(0);
+  const [recipientAddress, setRecipientAddress] = useState<string>('');
 
   useEffect(() => {
     const checkForExistingSeed = async () => {
@@ -39,6 +55,13 @@ const Popup = () => {
 
     checkForExistingSeed();
   }, []);
+
+  const handleSend1Next = (token: any, amount: number, address: string) => {
+    setSelectedToken(token);
+    setAmount(amount);
+    setRecipientAddress(address);
+    setCurrentScreen(Screen.Send2);
+  };
 
   const handleCreateWallet = () => {
     setCurrentScreen(Screen.Secret);
@@ -88,7 +111,43 @@ const Popup = () => {
           />
         );
       case Screen.Main:
-        return <Main isLight={isLight} passcode={passcode} />;
+        return (
+          <Main
+            isLight={isLight}
+            passcode={passcode}
+            onSend={() => setCurrentScreen(Screen.Send1)}
+            onReceive={() => setCurrentScreen(Screen.Receive)}
+          />
+        );
+      case Screen.Receive:
+        return (
+          <Receive
+            isLight={isLight}
+            selectedAccount={selectedAccount}
+            passcode={passcode}
+            onBack={() => setCurrentScreen(Screen.Main)}
+          />
+        ); // Pass selectedAccount and passcode
+      case Screen.Send1:
+        return (
+          <Send1
+            isLight={isLight}
+            passcode={passcode}
+            onBack={() => setCurrentScreen(Screen.Main)}
+            onNext={handleSend1Next}
+          />
+        );
+      case Screen.Send2:
+        return (
+          <Send2
+            isLight={isLight}
+            passcode={passcode}
+            onBack={() => setCurrentScreen(Screen.Send1)}
+            selectedToken={selectedToken}
+            amount={amount}
+            recipientAddress={recipientAddress}
+          />
+        );
       default:
         return null;
     }

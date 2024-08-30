@@ -7,17 +7,36 @@ import { encryptedSeedStorage } from '@extension/storage';
 const exchangeRate = 0.168; // $KAS to USD exchange rate
 const tokens = [
   { name: 'Kaspa', symbol: 'KAS', balance: 1200, exchangeRate: 0.17, change24h: -1.23 },
-  { name: 'KSPR', symbol: 'KSPR', balance: 50000, exchangeRate: 1.2, change24h: 2.45 },
-  { name: 'Nacho', symbol: 'NACHO', balance: 200, exchangeRate: 10, change24h: -0.75 },
-  { name: 'Kasper', symbol: 'KASPER', balance: 10000000, exchangeRate: 0.00000123, change24h: 4.67 },
+  { name: 'KSPR', symbol: 'KSPR', balance: 534578923.12, exchangeRate: 0, change24h: 0 },
+  { name: 'Nacho', symbol: 'NACHO', balance: 200, exchangeRate: 0, change24h: 0 },
+  { name: 'Kasper', symbol: 'KASPER', balance: 1345560000.0, exchangeRate: 0.00000123, change24h: 4.67 },
   { name: 'Chimp', symbol: 'CHIMP', balance: 10000, exchangeRate: 0.00312, change24h: 41.67 },
 ];
+
+type MainProps = {
+  isLight: boolean;
+  passcode: string;
+  onSend: () => void;
+  onReceive: () => void;
+};
 
 const accounts = [
   { name: 'Account 1', address: 'kaspa:qz0a4...someaddress1' },
   { name: 'Account 2', address: 'kaspa:qz0a4...someaddress2' },
   { name: 'Account 3', address: 'kaspa:qz0a4...someaddress3' },
 ];
+
+const formatBalance = (balance: number): string => {
+  if (balance >= 1_000_000_000_000) {
+    return (balance / 1_000_000_000_000).toFixed(2) + 'T';
+  } else if (balance >= 1_000_000_000) {
+    return (balance / 1_000_000_000).toFixed(2) + 'B';
+  } else if (balance >= 1_000_000) {
+    return (balance / 1_000_000).toFixed(2) + 'M';
+  } else {
+    return balance.toFixed(2);
+  }
+};
 
 const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
   const maxIndex = 2; // Maximum index you want to support
@@ -36,7 +55,7 @@ const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
   tryNextImage(); // Start the process
 };
 
-const Main: React.FC<{ isLight: boolean; passcode: string }> = ({ isLight, passcode }) => {
+const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive }) => {
   const [accountAddress, setAccountAddress] = useState<string>('');
   const [kaspaBalance, setKaspaBalance] = useState<number>(tokens[0].balance);
 
@@ -116,7 +135,7 @@ const Main: React.FC<{ isLight: boolean; passcode: string }> = ({ isLight, passc
           </button>
         </div>
         {/* Total Balance */}
-        <h1 className={`text-4xl font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>${totalUSD.toFixed(2)}</h1>
+        <h1 className={`text-3xl font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>${totalUSD.toFixed(2)}</h1>
         <p className={`text-lg ${totalChange24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
           {totalChange24h >= 0 ? '+' : ''}
           {totalChange24h.toFixed(2)}%
@@ -124,11 +143,13 @@ const Main: React.FC<{ isLight: boolean; passcode: string }> = ({ isLight, passc
       </div>
 
       {/* Icons */}
-      <div className="flex justify-around w-full mb-6 ">
+      <div className="flex justify-around w-full mb-6">
         {['Send', 'Receive', 'Swap', 'Buy'].map((action, index) => (
-          <div key={index} className="flex flex-col items-center ">
+          <div key={index} className="flex flex-col items-center">
             <div
-              className={`rounded-full p-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}>
+              className={`rounded-full p-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}
+              onClick={action === 'Send' ? onSend : action === 'Receive' ? onReceive : undefined} // Handle Send and Receive clicks
+            >
               <img src={`/popup/icons/${action.toLowerCase()}.svg`} alt={action} className="h-8 w-8" />
             </div>
             <p className={`text-sm ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>{action}</p>
@@ -155,18 +176,18 @@ const Main: React.FC<{ isLight: boolean; passcode: string }> = ({ isLight, passc
                   {token.name}
                 </h3>
                 <p className={`text-xs ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
-                  {token.balance.toFixed(2)} {token.symbol}
+                  {formatBalance(token.balance)} {token.symbol}
                 </p>
               </div>
             </div>
 
             <div className="text-right">
               <h3 className={`text-sm font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
-                ${(token.balance * token.exchangeRate).toFixed(2)}
+                {token.exchangeRate ? `$${(token.balance * token.exchangeRate).toFixed(2)}` : '$-'}
               </h3>
-              <p className={`text-sm ${token.change24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                {token.change24h >= 0 ? '+' : ''}
-                {token.change24h.toFixed(2)}%
+              <p
+                className={`text-sm ${token.exchangeRate ? (token.change24h >= 0 ? 'text-green-500' : 'text-red-500') : isLight ? 'text-gray-400' : 'text-gray-600'}`}>
+                {token.exchangeRate ? `${token.change24h >= 0 ? '+' : ''}${token.change24h.toFixed(2)}%` : '-%'}
               </p>
             </div>
           </div>
