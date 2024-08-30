@@ -17,7 +17,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 async function initWasmModule() {
   if (!wasmInitialized) {
     try {
-      await kaspa.default('/kaspa/kaspa_bg.wasm');
+      // Fetch and compile the WebAssembly module
+      const wasmModule = await fetch('/kaspa/kaspa_bg.wasm')
+        .then(response => response.arrayBuffer())
+        .then(bytes => WebAssembly.compile(bytes));
+
+      // Initialize the Wasm module with an object containing the module
+      await kaspa.default({
+        module_or_path: wasmModule,
+        // Optionally, include imports or other initialization options if needed
+        imports: {},
+      });
+
       wasmInitialized = true;
       console.log('Wasm initialized');
     } catch (error) {
