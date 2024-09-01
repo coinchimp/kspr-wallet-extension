@@ -162,21 +162,29 @@ const Popup = () => {
       <header className={`App-header ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>
         {/* Top legend */}
         <div className={`fixed top-0 left-0 w-full z-10 bg-transparent`}>
-          {/* Top legend and question mark */}
+          {/* Top legend and icons */}
           <div className={`flex justify-between items-center p-2`}>
-            <div className="text-center w-full">
-              <h1 className={`text-3xl font-extrabold ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>KSPR</h1>
-            </div>
-            <div className="absolute right-4">
-              <button
-                className={`p-2 rounded-full ${isLight ? 'bg-slate-50 text-gray-900' : 'bg-gray-800 text-gray-100'} 
-                  border border-transparent hover:border-current`}>
-                ?
-              </button>
-            </div>
+            {/* Gear Button on the Left */}
+            <button
+              className={`p-2 rounded-full ${isLight ? 'bg-gray-100' : 'bg-gray-800'} hover:scale-105 transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}
+              style={{ marginLeft: '8px' }} // Adjust margin for positioning
+            >
+              <img src="/popup/icons/settings.svg" alt="Settings" className="h-5 w-5" />
+            </button>
+
+            {/* KSPR Title Centered */}
+            <h1 className={`text-3xl font-extrabold flex-1 text-center ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>
+              KSPR
+            </h1>
+
+            {/* Help Button on the Right */}
+            <button
+              className={`p-2 rounded-full ${isLight ? 'bg-gray-100' : 'bg-gray-800'} hover:scale-105 transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}
+              style={{ marginRight: '8px' }} // Adjust margin for positioning
+            >
+              <img src="/popup/icons/help.svg" alt="Help" className="h-5 w-5" />
+            </button>
           </div>
-          {/* Fine line below the legend */}
-          <div className={`border-t-2 w-full ${isLight ? 'border-gray-900' : 'border-gray-100'}`} />
         </div>
 
         <section
@@ -184,32 +192,49 @@ const Popup = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '100%',
+            height: 'calc(100% - 72px)', // Ensure the section doesn't overlap with the top legend
             width: '100%',
-            paddingTop: '72px',
+            paddingTop: '15px',
+            overflowY: 'auto', // Make the section scrollable within its area
+            marginTop: '25px', // Push the section below the fixed legend
           }}>
           {renderScreen()}
         </section>
 
-        <ToggleButton>Toggle theme</ToggleButton>
+        <div className="flex justify-between items-center p-2">
+          {/* Toggle Button in the Center */}
+          <ToggleButton />
+
+          {/* Lock Button on the Right */}
+          <button
+            className={`absolute right-4 p-2 rounded-full  ${isLight ? 'bg-gray-100' : 'bg-gray-800'} hover:scale-105 transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}
+            style={{ marginRight: '8px' }}>
+            <img src="/popup/icons/lock.svg" alt="Lock" className="h-5 w-5" />
+          </button>
+        </div>
       </header>
     </div>
   );
 };
 
-const ToggleButton = (props: ComponentPropsWithoutRef<'button'>) => {
+const ToggleButton: React.FC = () => {
   const theme = useStorageSuspense(exampleThemeStorage);
+  const isLight = theme === 'light';
 
   return (
     <button
-      className={
-        props.className +
-        ' ' +
-        'font-bold mt-2 py-1 px-4 rounded shadow hover:scale-105 ' +
-        (theme === 'light' ? 'bg-white text-black shadow-black' : 'bg-black text-white')
-      }
-      onClick={exampleThemeStorage.toggle}>
-      {props.children}
+      className={`relative w-9 h-6 rounded-full transition duration-300 ease-in-out ${isLight ? 'bg-gray-300' : 'bg-gray-700'} p-3`}
+      onClick={exampleThemeStorage.toggle}
+      style={{ outline: isLight ? '2px solid gray-800' : '2px solid gray-200', margin: '9px' }} // Add margin and outline
+    >
+      <div
+        className={`absolute w-4 h-4 rounded-full transition-transform duration-300 ease-in-out ${isLight ? 'bg-white' : 'bg-gray-900'}`}
+        style={{
+          transform: isLight ? 'translate(0, -50%)' : 'translate(100%, -50%)', // Combine horizontal and vertical translation
+          top: '50%', // Center vertically
+          left: '2px', // Adjust left position if necessary
+        }}
+      />
     </button>
   );
 };
