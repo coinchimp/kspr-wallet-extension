@@ -1,7 +1,7 @@
 <div align="center">
 
 <picture>
-    <img alt="Logo" src="https://github.com/user-attachments/assets/a5dbf71c-c509-4c4f-80f4-be88a1943b0a" />
+    <img alt="Logo" src="https://github.com/user-attachments/assets/e31ae2f2-2e37-4e9f-b9f2-4d12ac4a0660" />
 </picture>
 
 ![](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
@@ -16,7 +16,7 @@
 > [!TIP]
 > Watch KSPR wallet in action
 >
-> https://github.com/user-attachments/assets/3b8e189f-6443-490e-a455-4f9570267f8c
+> https://github.com/user-attachments/assets/2f954710-c89f-4b76-9b70-89ae68ef90f6
 
 ## Table of Contents
 
