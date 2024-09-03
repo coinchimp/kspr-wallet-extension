@@ -11,6 +11,8 @@ import Import from '@src/components/screens/Import';
 import Receive from '@src/components/screens/Receive';
 import Send1 from '@src/components/screens/Send1';
 import Send2 from '@src/components/screens/Send2';
+import Settings from '@src/components/screens/Settings';
+import Actions from '@src/components/screens/Actions';
 import { encryptedSeedStorage } from '@extension/storage';
 
 enum Screen {
@@ -23,6 +25,8 @@ enum Screen {
   Receive,
   Send1,
   Send2,
+  Settings,
+  Actions,
 }
 
 const accounts = [
@@ -117,6 +121,7 @@ const Popup = () => {
             passcode={passcode}
             onSend={() => setCurrentScreen(Screen.Send1)}
             onReceive={() => setCurrentScreen(Screen.Receive)}
+            onActions={() => setCurrentScreen(Screen.Actions)}
           />
         );
       case Screen.Receive:
@@ -127,7 +132,25 @@ const Popup = () => {
             passcode={passcode}
             onBack={() => setCurrentScreen(Screen.Main)}
           />
-        ); // Pass selectedAccount and passcode
+        );
+      case Screen.Settings:
+        return (
+          <Settings
+            isLight={isLight}
+            selectedAccount={selectedAccount}
+            passcode={passcode}
+            onBack={() => setCurrentScreen(Screen.Main)}
+          />
+        );
+      case Screen.Actions:
+        return (
+          <Actions
+            isLight={isLight}
+            selectedAccount={selectedAccount}
+            passcode={passcode}
+            onBack={() => setCurrentScreen(Screen.Main)}
+          />
+        );
       case Screen.Send1:
         return (
           <Send1
@@ -153,6 +176,42 @@ const Popup = () => {
     }
   };
 
+  const settingsButton = () => {
+    if (currentScreen !== null && [Screen.Main, Screen.Send1, Screen.Send2, Screen.Receive].includes(currentScreen)) {
+      return (
+        <button
+          className={`p-2 rounded-full ${isLight ? 'bg-gray-100' : 'bg-gray-800'} hover:scale-105 transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}
+          style={{ marginLeft: '8px' }}
+          onClick={() => setCurrentScreen(Screen.Settings)}>
+          <img src="/popup/icons/settings.svg" alt="Settings" className="h-5 w-5" />
+        </button>
+      );
+    } else {
+      return (
+        <div
+          style={{
+            width: '2.5rem',
+            height: '2.5rem',
+            marginLeft: '8px',
+          }}
+        />
+      );
+    }
+  };
+
+  const LockButton = () => {
+    if (currentScreen !== null && [Screen.Main, Screen.Send1, Screen.Send2, Screen.Receive].includes(currentScreen)) {
+      return (
+        <button
+          className={`absolute right-4 p-2 rounded-full  ${isLight ? 'bg-gray-100' : 'bg-gray-800'} hover:scale-105 transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}
+          style={{ marginRight: '8px' }}>
+          <img src="/popup/icons/lock.svg" alt="Lock" className="h-5 w-5" />
+        </button>
+      );
+    }
+    return null;
+  };
+
   if (currentScreen === null) {
     return <div>Loading...</div>;
   }
@@ -164,13 +223,8 @@ const Popup = () => {
         <div className={`fixed top-0 left-0 w-full z-10 bg-transparent`}>
           {/* Top legend and icons */}
           <div className={`flex justify-between items-center p-2`}>
-            {/* Gear Button on the Left */}
-            <button
-              className={`p-2 rounded-full ${isLight ? 'bg-gray-100' : 'bg-gray-800'} hover:scale-105 transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}
-              style={{ marginLeft: '8px' }} // Adjust margin for positioning
-            >
-              <img src="/popup/icons/settings.svg" alt="Settings" className="h-5 w-5" />
-            </button>
+            {/* Settings Button */}
+            {settingsButton()}
 
             {/* KSPR Title Centered */}
             <h1 className={`text-3xl font-extrabold flex-1 text-center ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>
@@ -206,11 +260,7 @@ const Popup = () => {
           <ToggleButton />
 
           {/* Lock Button on the Right */}
-          <button
-            className={`absolute right-4 p-2 rounded-full  ${isLight ? 'bg-gray-100' : 'bg-gray-800'} hover:scale-105 transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}
-            style={{ marginRight: '8px' }}>
-            <img src="/popup/icons/lock.svg" alt="Lock" className="h-5 w-5" />
-          </button>
+          {LockButton()}
         </div>
       </header>
     </div>
