@@ -36,7 +36,7 @@ const manifest = deepmerge(
     },
     action: {
       default_popup: 'popup/index.html',
-      default_icon: 'icon-34.png',
+      default_icon: 'icon-128.png',
     },
     // chrome_url_overrides: {
     //   newtab: 'new-tab/index.html',
@@ -45,7 +45,10 @@ const manifest = deepmerge(
       extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';",
     },
     icons: {
+      16: 'icon-16.png',
+      48: 'icon-48.png',
       128: 'icon-128.png',
+      256: 'icon-256.png',
     },
     // content_scripts: [
     //   {
