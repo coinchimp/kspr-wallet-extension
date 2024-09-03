@@ -18,6 +18,7 @@ type MainProps = {
   passcode: string;
   onSend: () => void;
   onReceive: () => void;
+  onActions: () => void;
 };
 
 const accounts = [
@@ -55,7 +56,7 @@ const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
   tryNextImage(); // Start the process
 };
 
-const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive }) => {
+const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onActions }) => {
   const [accountAddress, setAccountAddress] = useState<string>('');
   const [kaspaBalance, setKaspaBalance] = useState<number>(tokens[0].balance);
 
@@ -148,8 +149,7 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive }) => 
           <div key={index} className="flex flex-col items-center">
             <div
               className={`rounded-full p-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}
-              onClick={action === 'Send' ? onSend : action === 'Receive' ? onReceive : undefined} // Handle Send and Receive clicks
-            >
+              onClick={action === 'Send' ? onSend : action === 'Receive' ? onReceive : undefined}>
               <img src={`/popup/icons/${action.toLowerCase()}.svg`} alt={action} className="h-8 w-8" />
             </div>
             <p className={`text-sm ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>{action}</p>
@@ -162,7 +162,8 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive }) => 
         {tokens.map((token, index) => (
           <div
             key={index}
-            className={`flex justify-between items-center p-4 rounded-lg  ${isLight ? 'bg-gray-100' : 'bg-gray-800'} transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}>
+            className={`flex justify-between items-center cursor-pointer p-4 rounded-lg  ${isLight ? 'bg-gray-100' : 'bg-gray-800'} transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}
+            onClick={onActions}>
             <div className="flex items-center space-x-4">
               <img
                 src={`/popup/${token.symbol.toLowerCase()}.png`}

@@ -4,7 +4,6 @@ import Balance from '@src/components/utils/Balance';
 import { createAccounts } from '../../../../../chrome-extension/utils/Kaspa';
 import { decryptData } from '../../../../../chrome-extension/utils/Crypto';
 import { encryptedSeedStorage } from '@extension/storage';
-//import { useNavigate } from 'react-router-dom';
 
 type ReceiveProps = {
   isLight: boolean;
@@ -50,7 +49,7 @@ const Receive: React.FC<ReceiveProps> = ({ isLight, selectedAccount, passcode, o
   }, [passcode]);
 
   const handleClose = () => {
-    //navigate('/'); // Assuming '/' is the route for your Main screen
+    console.log('Receive: handleClose');
   };
 
   return (
