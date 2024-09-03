@@ -1,31 +1,20 @@
 <div align="center">
 
 <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/99cb6303-64e4-4bed-bf3f-35735353e6de" />
-    <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/a5dbf71c-c509-4c4f-80f4-be88a1943b0a" />
-    <img alt="Logo" src="https://github.com/user-attachments/assets/99cb6303-64e4-4bed-bf3f-35735353e6de" />
+    <img alt="Logo" src="https://github.com/user-attachments/assets/a5dbf71c-c509-4c4f-80f4-be88a1943b0a" />
 </picture>
 
 ![](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
 ![](https://img.shields.io/badge/Typescript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![](https://badges.aleen42.com/src/vitejs.svg)
 
-![GitHub action badge](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite/actions/workflows/build-zip.yml/badge.svg)
-![GitHub action badge](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite/actions/workflows/lint.yml/badge.svg)
-
-<img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://github.com/Jonghakseo/chrome-extension-boilerplate-react-viteFactions&count_bg=%23#222222&title_bg=%23#454545&title=😀&edge_flat=true" alt="hits"/>
-<a href="https://discord.gg/Nu5Rf8xr" target="_blank"><img src="https://discord.com/api/guilds/1263404974830915637/widget.png"/></a>
-
-> This boilerplate
-> has [Legacy version](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite/tree/legacy)
-
 </div>
 
 > [!NOTE]
-> This project is listed in the [Awesome Vite](https://github.com/vitejs/awesome-vite)
+> This Kaspa wallet is open-source and compliant with KIP99. Initially developed by Dwayne and Coinchimp, it also integrates KRC20 functionalities.
 
 > [!TIP]
-> Share storage state between all pages
+> Watch KSPR wallet in action
 >
 > https://github.com/user-attachments/assets/3b8e189f-6443-490e-a455-4f9570267f8c
 
@@ -48,7 +37,7 @@
 
 ## Intro <a name="intro"></a>
 
-This boilerplate is made for creating chrome extensions using React and Typescript.
+This boilerplate is made for creating Kaspa wallet chrome/firefox extensions using React and Typescript.
 > The focus was on improving the build speed and development experience with Vite(Rollup) & Turborepo.
 
 ## Features <a name="features"></a>
@@ -126,66 +115,8 @@ Some shared packages
 - `zipper` - By ```pnpm zip``` you can pack ```dist``` folder into ```extension.zip``` inside newly created ```dist-zip``` 
 
 ### Pages <a name="pages"></a>
-
-- `content` - [content script](https://developer.chrome.com/docs/extensions/mv3/content_scripts/) for chrome
-  extension (`content_scripts` in manifest.json)
-- `content-ui` - [content script](https://developer.chrome.com/docs/extensions/mv3/content_scripts/) for render UI in
-  user's page (`content_scripts` in manifest.json)
-- `content-runtime` - [content runtime script](https://developer.chrome.com/docs/extensions/develop/concepts/content-scripts#functionality)
-   this can be inject from `popup` like standard `content`
-- `devtools` - [devtools](https://developer.chrome.com/docs/extensions/mv3/devtools/#creating) for chrome
-  extension (`devtools_page` in manifest.json)
-- `devtools-panel` - devtools panel for [devtools](pages/devtools/src/index.ts)
-- `new-tab` - [new tab](https://developer.chrome.com/docs/extensions/mv3/override/) for chrome
-extension (`chrome_url_overrides.newtab` in manifest.json)
-- `options` - [options](https://developer.chrome.com/docs/extensions/mv3/options/) for chrome extension (`options_page`
-  in manifest.json)
 - `popup` - [popup](https://developer.chrome.com/docs/extensions/reference/browserAction/) for chrome
   extension (`action.default_popup` in
   manifest.json)
 - `side-panel` - [sidepanel(Chrome 114+)](https://developer.chrome.com/docs/extensions/reference/sidePanel/) for chrome
   extension (`side_panel.default_path` in manifest.json)
-
-## Community <a name="community"></a>
-
-To chat with other community members, you can join the [Discord](https://discord.gg/Nu5Rf8xr) server.
-You can ask questions on that server, and you can also help others.
-
-Also, suggest new features or share any challenges you've faced while developing Chrome extensions!
-
-## Reference <a name="reference"></a>
-
-- [Vite Plugin](https://vitejs.dev/guide/api-plugin.html)
-- [ChromeExtension](https://developer.chrome.com/docs/extensions/mv3/)
-- [Rollup](https://rollupjs.org/guide/en/)
-- [Turborepo](https://turbo.build/repo/docs)
-- [Rollup-plugin-chrome-extension](https://www.extend-chrome.dev/rollup-plugin)
-
-## Star History <a name="starhistory"></a>
-
-<a href="https://star-history.com/#Jonghakseo/chrome-extension-boilerplate-react-vite&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Jonghakseo/chrome-extension-boilerplate-react-vite&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Jonghakseo/chrome-extension-boilerplate-react-vite&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Jonghakseo/chrome-extension-boilerplate-react-vite&type=Date" />
- </picture>
-</a>
-
-## Contributors <a name="contributors"></a>
-
-This Boilerplate is made possible thanks to all of its contributors.
-
-<a href="https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite/graphs/contributors">
-  <img width="500px" src="https://contrib.rocks/image?repo=Jonghakseo/chrome-extension-boilerplate-react-vite" alt="All Contributors"/>
-</a>
-
----
-
-## Special Thanks To
-
-| <a href="https://jb.gg/OpenSourceSupport"><img width="40" src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" alt="JetBrains Logo (Main) logo."></a> | <a href="https://www.linkedin.com/in/j-acks0n"><img width="40" style="border-radius:50%" src='https://avatars.githubusercontent.com/u/23139754' alt='Jackson Hong'/></a> |
-|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-
----
-
-Made by [Jonghakseo](https://jonghakseo.github.io/)

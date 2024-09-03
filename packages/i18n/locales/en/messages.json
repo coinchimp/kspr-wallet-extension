@@ -1,11 +1,11 @@
 {
   "extensionDescription": {
     "description": "KSPR Wallet for Kaspa KRC20 Tokens",
-    "message": "Chrome extension KSPR Wallet for Kaspa KRC20 Tokens developed with Vite, React and Typescript"
+    "message": "KSPR Wallet is a browser enxtension for Kaspa (KAS) and KRC20 tokens."
   },
   "extensionName": {
     "description": "KSPR Wallet",
-    "message": "Chrome extension for KSPR Wallet"
+    "message": "KSPR Wallet"
   },
   "toggleTheme": {
     "message": "Toggle theme"
