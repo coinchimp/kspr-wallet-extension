@@ -58,6 +58,23 @@ type ActionsProps = {
 const Actions: React.FC<ActionsProps> = ({ isLight, selectedAccount, passcode, onBack }) => {
   const [accountAddress, setAccountAddress] = useState<string>('');
 
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const maxIndex = 2; // Maximum index you want to support
+
+    const getRandomIndex = () => {
+      return Math.floor(Math.random() * maxIndex) + 1; // Generate a random index between 1 and maxIndex
+    };
+
+    const tryNextImage = () => {
+      const randomIndex = getRandomIndex();
+      e.currentTarget.src = `/popup/ksprwallet${randomIndex}.png`;
+      e.currentTarget.onerror = null;
+    };
+
+    e.currentTarget.onerror = tryNextImage; // Set the onError to try the next image
+    tryNextImage(); // Start the process
+  };
+
   useEffect(() => {
     const loadAccountAddress = async () => {
       try {
@@ -102,9 +119,10 @@ const Actions: React.FC<ActionsProps> = ({ isLight, selectedAccount, passcode, o
             className={`flex justify-between items-center p-4 rounded-lg cursor-pointer transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'} `}>
             <div className="flex items-center space-x-4">
               <img
-                src={`/popup/icons/${action.tokenSymbol.toLowerCase()}.svg`}
+                src={`/popup/${action.tokenSymbol.toLowerCase()}.png`}
                 alt={action.tokenName}
                 className="h-9 w-9"
+                onError={handleImageError}
               />
               <div>
                 <h3 className={`text-base font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>

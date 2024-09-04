@@ -60,6 +60,8 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
   const [accountAddress, setAccountAddress] = useState<string>('');
   const [kaspaBalance, setKaspaBalance] = useState<number>(tokens[0].balance);
 
+  const utxo_count = 5;
+
   const [selectedAccount, setSelectedAccount] = useState(accounts[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -145,13 +147,21 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
 
       {/* Icons */}
       <div className="flex justify-around w-full mb-6">
-        {['Send', 'Receive', 'Swap', 'Buy'].map((action, index) => (
-          <div key={index} className="flex flex-col items-center">
+        {['Send', 'Receive', 'Compound'].map((action, index) => (
+          <div key={index} className="relative flex flex-col items-center">
             <div
               className={`rounded-full p-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}
               onClick={action === 'Send' ? onSend : action === 'Receive' ? onReceive : undefined}>
               <img src={`/popup/icons/${action.toLowerCase()}.svg`} alt={action} className="h-8 w-8" />
             </div>
+
+            {/* Notification badge for "Compound" */}
+            {action === 'Compound' && utxo_count > 2 && (
+              <div className="absolute bottom-6 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {utxo_count}
+              </div>
+            )}
+
             <p className={`text-sm ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>{action}</p>
           </div>
         ))}
