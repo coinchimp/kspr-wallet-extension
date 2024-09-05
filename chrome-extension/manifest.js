@@ -28,7 +28,7 @@ const manifest = deepmerge(
     version: packageJson.version,
     description: '__MSG_extensionDescription__',
     host_permissions: ['<all_urls>'],
-    permissions: ['storage', 'scripting'],
+    permissions: ['storage', 'scripting', 'declarativeNetRequest'],
     options_page: 'options/index.html',
     background: {
       service_worker: 'background.iife.js',
@@ -65,6 +65,15 @@ const manifest = deepmerge(
     //   },
     // ],
     // devtools_page: 'devtools/index.html',
+    declarative_net_request: {
+      rule_resources: [
+        {
+          id: "ruleset_1",
+          enabled: true,
+          path: "rules.json"
+        }
+      ]
+    },
     web_accessible_resources: [
       {
         resources: ['*.js', '*.css', '*.svg', 'icon-128.png', 'icon-34.png'],
