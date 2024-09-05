@@ -12,9 +12,24 @@ type SettingsProps = {
   };
   passcode: string;
   onBack: () => void;
+  onAccounts: () => void;
+  onSecurity: () => void;
+  onNetwork: () => void;
+  onContacts: () => void;
+  onAbout: () => void;
 };
 
-const Settings: React.FC<SettingsProps> = ({ isLight, selectedAccount, passcode, onBack }) => {
+const Settings: React.FC<SettingsProps> = ({
+  isLight,
+  selectedAccount,
+  passcode,
+  onBack,
+  onAccounts,
+  onSecurity,
+  onNetwork,
+  onContacts,
+  onAbout,
+}) => {
   const [accountAddress, setAccountAddress] = useState<string>('');
 
   useEffect(() => {
@@ -43,11 +58,11 @@ const Settings: React.FC<SettingsProps> = ({ isLight, selectedAccount, passcode,
   }, [passcode]);
 
   const settingsItems = [
-    { label: 'Accounts', icon: '/popup/icons/accounts.svg' },
-    { label: 'Security', icon: '/popup/icons/security.svg' },
-    { label: 'Network', icon: '/popup/icons/network.svg' },
-    { label: 'Contacts', icon: '/popup/icons/contacts.svg' },
-    { label: 'About', icon: '/popup/icons/about.svg' },
+    { label: 'Accounts', icon: '/popup/icons/accounts.svg', action: onAccounts },
+    { label: 'Security', icon: '/popup/icons/security.svg', action: onSecurity },
+    { label: 'Network', icon: '/popup/icons/network.svg', action: onNetwork },
+    { label: 'Contacts', icon: '/popup/icons/contacts.svg', action: onContacts },
+    { label: 'About', icon: '/popup/icons/about.svg', action: onAbout },
   ];
 
   return (
@@ -66,7 +81,9 @@ const Settings: React.FC<SettingsProps> = ({ isLight, selectedAccount, passcode,
         {settingsItems.map((item, index) => (
           <div
             key={index}
-            className={`flex justify-between items-center p-4 rounded-lg cursor-pointer transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'} `}>
+            className={`flex justify-between items-center p-4 rounded-lg cursor-pointer transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'} `}
+            onClick={item.action} // Navigate to the respective page
+          >
             <div className="flex items-center space-x-4">
               <img src={item.icon} alt={item.label} className="h-9 w-9" />
               <div>
