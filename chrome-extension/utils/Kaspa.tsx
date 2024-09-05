@@ -48,12 +48,12 @@ async function ensureWasmModuleInitialized() {
 async function updateRpcClient(kaspaNetwork: string) {
   try {
     await ensureWasmModuleInitialized(); // Ensure the Wasm module is initialized
-    if (rpcClient && rpcClient.isConnected()) {
+    if (rpcClient && rpcClient.isConnected) {
       await rpcClient.disconnect();
     }
     const RpcClient = kaspa.RpcClient;
     rpcClient = new RpcClient({
-      resolver: new kaspa.Resolver(),
+      resolver: new kaspa.Resolver({ urls : ["https://1.rpc-kspr.org", "https://2.rpc-kspr.org", "https://3.rpc-kspr.org"], tls : true}),
       networkId: kaspaNetwork,
     });
     await rpcClient.connect();
@@ -81,7 +81,7 @@ export async function fetchBalance(address: string): Promise<number> {
 
 // Ensure RPC client is connected
 export async function ensureRpcClientConnected() {
-  if (!rpcClient || !rpcClient.isConnected()) {
+  if (!rpcClient || !rpcClient.isConnected) {
     console.log('RPC client not connected, initializing Kaspa...');
     await initKaspa();
   }
