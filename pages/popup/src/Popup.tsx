@@ -14,6 +14,7 @@ import Send2 from '@src/components/screens/Send2';
 import Settings from '@src/components/screens/Settings';
 import Actions from '@src/components/screens/Actions';
 import Accounts from '@src/components/screens/Accounts';
+import AccountInfo from '@src/components/screens/AccountInfo';
 import Security from '@src/components/screens/Security';
 import Network from '@src/components/screens/Network';
 import Contacts from '@src/components/screens/Contacts';
@@ -38,6 +39,7 @@ enum Screen {
   Network,
   Contacts,
   About,
+  AccountInfo,
 }
 
 const accounts = [
@@ -174,6 +176,17 @@ const Popup = () => {
             selectedAccount={selectedAccount}
             passcode={passcode}
             onBack={() => setCurrentScreen(Screen.Settings)}
+            onAccountInfo={() => setCurrentScreen(Screen.AccountInfo)}
+          />
+        );
+      case Screen.AccountInfo:
+        return (
+          <AccountInfo
+            isLight={isLight}
+            selectedAccount={selectedAccount}
+            passcode={passcode}
+            onBack={() => setCurrentScreen(Screen.Accounts)}
+            onRemove={() => setCurrentScreen(Screen.AccountInfo)}
           />
         );
       case Screen.Security:
