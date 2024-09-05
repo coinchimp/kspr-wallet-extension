@@ -83,7 +83,7 @@ const Accounts: React.FC<AccountsProps> = ({ isLight, selectedAccount, passcode,
         <button
           className={`w-full p-4 rounded-lg font-bold transition duration-300 ease-in-out ${isLight ? 'bg-[#70C7BA] text-white' : 'bg-[#70C7BA] text-white'} hover:scale-105`}
           onClick={onAccountInfo}>
-          Add / Import
+          Add
         </button>
       </div>
     </div>
