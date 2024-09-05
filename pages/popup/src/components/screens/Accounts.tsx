@@ -1,4 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import Balance from '@src/components/utils/Balance';
+import { createAccounts } from '../../../../../chrome-extension/utils/Kaspa';
+import { decryptData } from '../../../../../chrome-extension/utils/Crypto';
+import { encryptedSeedStorage } from '@extension/storage';
 
 type AccountsProps = {
   isLight: boolean;
@@ -6,15 +10,43 @@ type AccountsProps = {
     name: string;
     address: string;
   };
+  passcode: string;
   onBack: () => void;
 };
 
-const Accounts: React.FC<AccountsProps> = ({ isLight, selectedAccount, onBack }) => {
+const Accounts: React.FC<AccountsProps> = ({ isLight, selectedAccount, passcode, onBack }) => {
   const [accounts, setAccounts] = useState([
     { name: 'Account 1', address: 'kaspa:qz0a4...someaddress1' },
     { name: 'Account 2', address: 'kaspa:qz0a4...someaddress2' },
     { name: 'Account 3', address: 'kaspa:qz0a4...someaddress3' },
   ]);
+
+  const [accountAddress, setAccountAddress] = useState<string>('');
+
+  useEffect(() => {
+    const loadAccountAddress = async () => {
+      try {
+        const encryptedSeed = await encryptedSeedStorage.getSeed();
+        if (!encryptedSeed) {
+          throw new Error('No seed found in storage.');
+        }
+
+        const seed = await decryptData(passcode, encryptedSeed);
+        const accounts = await createAccounts(seed);
+        console.log('Generated accounts:', accounts);
+
+        if (accounts && accounts.length > 0) {
+          setAccountAddress(accounts[0].address);
+        } else {
+          throw new Error('No accounts generated.');
+        }
+      } catch (error) {
+        console.error('Failed to load account address:', error);
+      }
+    };
+
+    loadAccountAddress();
+  }, [passcode]);
 
   return (
     <div className="flex flex-col items-center justify-start w-full h-full p-4 pt-6 overflow-y-auto">

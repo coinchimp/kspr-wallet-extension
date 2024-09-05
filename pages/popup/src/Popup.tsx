@@ -13,6 +13,12 @@ import Send1 from '@src/components/screens/Send1';
 import Send2 from '@src/components/screens/Send2';
 import Settings from '@src/components/screens/Settings';
 import Actions from '@src/components/screens/Actions';
+import Accounts from '@src/components/screens/Accounts';
+import Security from '@src/components/screens/Security';
+import Network from '@src/components/screens/Network';
+import Contacts from '@src/components/screens/Contacts';
+import About from '@src/components/screens/About';
+
 import { encryptedSeedStorage } from '@extension/storage';
 
 enum Screen {
@@ -27,6 +33,11 @@ enum Screen {
   Send2,
   Settings,
   Actions,
+  Accounts,
+  Security,
+  Network,
+  Contacts,
+  About,
 }
 
 const accounts = [
@@ -140,6 +151,11 @@ const Popup = () => {
             selectedAccount={selectedAccount}
             passcode={passcode}
             onBack={() => setCurrentScreen(Screen.Main)}
+            onAccounts={() => setCurrentScreen(Screen.Accounts)}
+            onSecurity={() => setCurrentScreen(Screen.Security)}
+            onNetwork={() => setCurrentScreen(Screen.Network)}
+            onContacts={() => setCurrentScreen(Screen.Contacts)}
+            onAbout={() => setCurrentScreen(Screen.About)}
           />
         );
       case Screen.Actions:
@@ -149,6 +165,51 @@ const Popup = () => {
             selectedAccount={selectedAccount}
             passcode={passcode}
             onBack={() => setCurrentScreen(Screen.Main)}
+          />
+        );
+      case Screen.Accounts:
+        return (
+          <Accounts
+            isLight={isLight}
+            selectedAccount={selectedAccount}
+            passcode={passcode}
+            onBack={() => setCurrentScreen(Screen.Settings)}
+          />
+        );
+      case Screen.Security:
+        return (
+          <Security
+            isLight={isLight}
+            //selectedAccount={selectedAccount}
+            //passcode={passcode}
+            onBack={() => setCurrentScreen(Screen.Settings)}
+          />
+        );
+      case Screen.Network:
+        return (
+          <Network
+            isLight={isLight}
+            //selectedAccount={selectedAccount}
+            //passcode={passcode}
+            onBack={() => setCurrentScreen(Screen.Settings)}
+          />
+        );
+      case Screen.Contacts:
+        return (
+          <Contacts
+            isLight={isLight}
+            //selectedAccount={selectedAccount}
+            //passcode={passcode}
+            onBack={() => setCurrentScreen(Screen.Settings)}
+          />
+        );
+      case Screen.About:
+        return (
+          <About
+            isLight={isLight}
+            //selectedAccount={selectedAccount}
+            //passcode={passcode}
+            onBack={() => setCurrentScreen(Screen.Settings)}
           />
         );
       case Screen.Send1:
