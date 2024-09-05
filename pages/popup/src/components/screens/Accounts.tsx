@@ -12,9 +12,10 @@ type AccountsProps = {
   };
   passcode: string;
   onBack: () => void;
+  onAccountInfo: () => void;
 };
 
-const Accounts: React.FC<AccountsProps> = ({ isLight, selectedAccount, passcode, onBack }) => {
+const Accounts: React.FC<AccountsProps> = ({ isLight, selectedAccount, passcode, onBack, onAccountInfo }) => {
   const [accounts, setAccounts] = useState([
     { name: 'Account 1', address: 'kaspa:qz0a4...someaddress1' },
     { name: 'Account 2', address: 'kaspa:qz0a4...someaddress2' },
@@ -65,7 +66,8 @@ const Accounts: React.FC<AccountsProps> = ({ isLight, selectedAccount, passcode,
         {accounts.map((account, index) => (
           <div
             key={index}
-            className={`flex justify-between items-center p-4 rounded-lg transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'} `}>
+            className={`flex justify-between cursor-pointer items-center p-4 rounded-lg transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'} `}
+            onClick={onAccountInfo}>
             <div className="flex items-center space-x-4">
               <div>
                 <h3 className={`text-base font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>{account.name}</h3>
@@ -80,13 +82,8 @@ const Accounts: React.FC<AccountsProps> = ({ isLight, selectedAccount, passcode,
       <div className="w-full mt-6">
         <button
           className={`w-full p-4 rounded-lg font-bold transition duration-300 ease-in-out ${isLight ? 'bg-[#70C7BA] text-white' : 'bg-[#70C7BA] text-white'} hover:scale-105`}
-          onClick={() => {
-            // Logic for adding a new account (placeholder)
-            const newAccountName = `Account ${accounts.length + 1}`;
-            const newAccount = { name: newAccountName, address: `kaspa:qz0a4...newaddress${accounts.length + 1}` };
-            setAccounts([...accounts, newAccount]);
-          }}>
-          Add / Import
+          onClick={onAccountInfo}>
+          Add
         </button>
       </div>
     </div>
