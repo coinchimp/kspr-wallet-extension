@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Balance from '@src/components/utils/Balance';
-import { createAccounts } from '../../../../../chrome-extension/utils/Kaspa';
 import { decryptData } from '../../../../../chrome-extension/utils/Crypto';
 import { encryptedSeedStorage } from '@extension/storage';
 
@@ -33,7 +32,16 @@ const Accounts: React.FC<AccountsProps> = ({ isLight, selectedAccount, passcode,
         }
 
         const seed = await decryptData(passcode, encryptedSeed);
-        const accounts = await createAccounts(seed);
+        const accounts = [
+          {
+            name: 'Account #1',
+            address: 'kaspatest:qzkstpzavl0xp479m573uhu3ujqj6u775vrtqrq0a7qzu0z2m89lq7hwkzgj4',
+          },
+          {
+            name: 'Account #2',
+            address: 'kaspatest:qz7d28dacezxdz066pzpkrrf2p45h2rr28evyedwmzlzer6kgvpvc36tjzvcj',
+          },
+        ];
         console.log('Generated accounts:', accounts);
 
         if (accounts && accounts.length > 0) {

@@ -1,0 +1,110 @@
+[
+    {
+      "id": 1,
+      "priority": 1,
+      "action": {
+        "type": "modifyHeaders",
+        "requestHeaders": [
+          {
+            "header": "X-Version",
+            "operation": "set",
+            "value": "1.0"
+          }
+        ]
+      },
+      "condition": {
+        "urlFilter": "https://*.rpc-kspr.eu/*",
+        "resourceTypes": ["main_frame", "sub_frame", "xmlhttprequest"]
+      }
+    },
+    {
+      "id": 2,
+      "priority": 1,
+      "action": {
+        "type": "modifyHeaders",
+        "requestHeaders": [
+          {
+            "header": "X-Version",
+            "operation": "set",
+            "value": "1.0"
+          }
+        ]
+      },
+      "condition": {
+        "urlFilter": "wss://*.rpc-kspr.eu/*",
+        "resourceTypes": ["websocket"]
+      }
+    },
+    {
+        "id": 3,
+        "priority": 1,
+        "action": {
+          "type": "modifyHeaders",
+          "requestHeaders": [
+            {
+                "header": "X-Version",
+                "operation": "set",
+                "value": "1.0"
+            }
+          ]
+        },
+        "condition": {
+          "urlFilter": "https://*.rpc-kspr.us/*",
+          "resourceTypes": ["main_frame", "sub_frame", "xmlhttprequest"]
+        }
+      },
+      {
+        "id": 4,
+        "priority": 1,
+        "action": {
+          "type": "modifyHeaders",
+          "requestHeaders": [
+            {
+                "header": "X-Version",
+                "operation": "set",
+                "value": "1.0"
+            }
+          ]
+        },
+        "condition": {
+          "urlFilter": "wss://*.rpc-kspr.us/*",
+          "resourceTypes": ["websocket"]
+        }
+      },
+      {
+          "id": 5,
+          "priority": 1,
+          "action": {
+            "type": "modifyHeaders",
+            "requestHeaders": [
+              {
+                "header": "X-Version",
+                "operation": "set",
+                "value": "1.0"
+              }
+            ]
+          },
+          "condition": {
+            "urlFilter": "https://*.rpc-kspr.asia/*",
+            "resourceTypes": ["main_frame", "sub_frame", "xmlhttprequest"]
+          }
+        },
+        {
+          "id": 6,
+          "priority": 1,
+          "action": {
+            "type": "modifyHeaders",
+            "requestHeaders": [
+              {
+                "header": "X-Version",
+                "operation": "set",
+                "value": "1.0"
+              }
+            ]
+          },
+          "condition": {
+            "urlFilter": "wss://*.rpc-kspr.asia/*",
+            "resourceTypes": ["websocket"]
+          }
+        }
+  ]

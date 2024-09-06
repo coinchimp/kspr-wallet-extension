@@ -1,25 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { fetchBalance } from '../../../../../chrome-extension/utils/Kaspa';
+import React, { useEffect } from 'react';
 
-const Balance = () => {
-  const [balance, setBalance] = useState<number | null>(null);
-  const address = 'kaspatest:qr0gskdc3nekflse693ukz0ckg6mqzz9nql2htvl08rw2qu0epl8s2lptp06k';
+type BalanceProps = {
+  address: string; // Accept address as a prop
+  onBalanceUpdate: (balance: number) => void; // Accept a callback to update balance
+};
 
+const Balance: React.FC<BalanceProps> = ({ address, onBalanceUpdate }) => {
   useEffect(() => {
     const getBalance = async () => {
       try {
         const balance = await fetchBalance(address);
-        setBalance(balance);
+        onBalanceUpdate(balance); // Call the callback with fetched balance
       } catch (error) {
         console.error('Error fetching balance:', error);
-        setBalance(null);
+        onBalanceUpdate(0); // Set balance to 0 or handle error appropriately
       }
     };
 
     getBalance();
-  }, [address]);
+  }, [address, onBalanceUpdate]);
 
-  return <>{balance !== null ? <span>Balance: {balance.toFixed(2)} KAS</span> : <span>Loading balance...</span>}</>;
+  async function fetchBalance(address: string): Promise<number> {
+    return new Promise<number>((resolve, reject) => {
+      chrome.runtime.sendMessage({ type: 'FETCH_BALANCE', address }, response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(response.balance);
+        }
+      });
+    });
+  }
+
+  return null; // This component only handles balance fetching, no UI needed here
 };
 
 export default Balance;
