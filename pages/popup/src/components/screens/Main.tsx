@@ -40,12 +40,12 @@ const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
 
 const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onActions }) => {
   const [kasBalance, setKasBalance] = useState<number | null>(null); // Store Kaspa balance
+  const [kasBalanceFetched, setKasBalanceFetched] = useState<boolean>(false); // Track if Kaspa balance is fetched
   const [tokensData, setTokensData] = useState<any[]>([]); // Store fetched token images
   const [tokensFromApi, setTokensFromApi] = useState<any[]>([]); // Store tokens from Kasplex API
   const [accounts, setAccounts] = useState<any[]>([]); // Store fetched accounts
   const [selectedAccount, setSelectedAccount] = useState<any | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [balanceFetched, setBalanceFetched] = useState(false); // To track if balance was fetched
 
   // Kaspa token object
   const kasToken = {
@@ -123,10 +123,14 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
 
   useEffect(() => {
     if (selectedAccount) {
-      setBalanceFetched(false); // Reset balanceFetched when switching accounts
       fetchTokensFromKasplex(selectedAccount.address); // Fetch tokens when account is selected
+
+      // Fetch Kaspa balance only once per account
+      if (!kasBalanceFetched) {
+        setKasBalanceFetched(true); // Mark Kaspa balance as fetched
+      }
     }
-  }, [selectedAccount]);
+  }, [selectedAccount, kasBalanceFetched]);
 
   const getTokenImage = (symbol: string) => {
     const token = tokensData.find(token => token.symbol.toLowerCase() === symbol.toLowerCase());
@@ -135,8 +139,8 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
 
   return (
     <div className="flex flex-col items-center justify-start w-full h-full p-4 pt-6 overflow-y-auto">
-      {/* Fetch Kaspa balance only if the selected account is available */}
-      {selectedAccount && (
+      {/* Fetch Kaspa balance only if the selected account is available and not yet fetched */}
+      {selectedAccount && !kasBalanceFetched && (
         <Balance address={selectedAccount.address} onBalanceUpdate={balance => setKasBalance(balance)} />
       )}
 
@@ -163,6 +167,7 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
                     }`}
                     onClick={() => {
                       setSelectedAccount(account);
+                      setKasBalanceFetched(false); // Reset Kaspa balance fetch for new account
                       setDropdownOpen(false);
                     }}>
                     {account.name}
