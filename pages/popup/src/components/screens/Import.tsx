@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import Unlock from '@src/components/screens/Unlock';
-import { createAccounts } from '../../../../../chrome-extension/utils/Kaspa';
 import { encryptData } from '../../../../../chrome-extension/utils/Crypto';
 import { encryptedSeedStorage } from '@extension/storage';
 
@@ -53,7 +52,16 @@ const Import: React.FC<{ isLight: boolean; onImport: (passcode: string) => void 
   const handleSetPasscode = async (passcode: string) => {
     try {
       const seedPhrase = inputWords.slice(0, is24Words ? 24 : 12).join(' ');
-      const accounts = await createAccounts(seedPhrase);
+      const accounts = [
+        {
+          name: 'Account #1',
+          address: 'kaspatest:qzkstpzavl0xp479m573uhu3ujqj6u775vrtqrq0a7qzu0z2m89lq7hwkzgj4',
+        },
+        {
+          name: 'Account #2',
+          address: 'kaspatest:qz7d28dacezxdz066pzpkrrf2p45h2rr28evyedwmzlzer6kgvpvc36tjzvcj',
+        },
+      ];
 
       if (accounts && accounts.length > 0) {
         const encryptedSeed = await encryptData(passcode, seedPhrase);

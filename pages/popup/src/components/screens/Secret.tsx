@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { generateMnemonic } from '../../../../../chrome-extension/utils/Kaspa';
 import { toast } from 'react-toastify';
 
 const Secret: React.FC<{ isLight: boolean; onNextStep: (words: string[]) => void }> = ({ isLight, onNextStep }) => {
@@ -8,12 +7,21 @@ const Secret: React.FC<{ isLight: boolean; onNextStep: (words: string[]) => void
 
   useEffect(() => {
     const generateAndSetMnemonic = async () => {
-      const mnemonic = await generateMnemonic(); // Await the mnemonic phrase
-      const words = mnemonic.split(' '); // Split the mnemonic phrase into individual words
-      setSecretWords(words); // Set the secretWords state with the generated words
+      // Send a message to the background script to generate the mnemonic
+      chrome.runtime.sendMessage({ type: 'GENERATE_WALLET' }, response => {
+        if (response.error) {
+          toast.error('Failed to generate secret phrase.');
+          console.error(response.error);
+          return;
+        }
+
+        const mnemonic = response.mnemonic; // Get the mnemonic from the response
+        const words = mnemonic.split(' '); // Split the mnemonic into individual words
+        setSecretWords(words); // Set the secretWords state with the generated words
+      });
     };
 
-    generateAndSetMnemonic(); // Call the async function
+    generateAndSetMnemonic(); // Call the function
   }, []);
 
   const handleNextStep = () => {
