@@ -12,13 +12,28 @@ type AccountsProps = {
   passcode: string;
   onBack: () => void;
   onAccountInfo: () => void;
+  onNewAccount: () => void;
 };
 
-const Accounts: React.FC<AccountsProps> = ({ isLight, selectedAccount, passcode, onBack, onAccountInfo }) => {
+const reduceKaspaAddress = (address: string): string => {
+  if (address.length > 20) {
+    return `${address.slice(0, 12)}...${address.slice(-10)}`;
+  }
+  return address;
+};
+
+const Accounts: React.FC<AccountsProps> = ({
+  isLight,
+  selectedAccount,
+  passcode,
+  onBack,
+  onAccountInfo,
+  onNewAccount,
+}) => {
   const [accounts, setAccounts] = useState([
-    { name: 'Account 1', address: 'kaspa:qz0a4...someaddress1' },
-    { name: 'Account 2', address: 'kaspa:qz0a4...someaddress2' },
-    { name: 'Account 3', address: 'kaspa:qz0a4...someaddress3' },
+    { name: 'Account 1', address: 'kaspatest:qr63dcf5mfexwg9kcx77gr6pgcy099m3963geaa4ed7pva2u9vcsk8583qkcl' },
+    { name: 'Account 2', address: 'kaspatest:qr63dcf5mfexwg9kcx77gr6pgcy099m3963geaa4ed7pva2u9vcsk8583qkcl' },
+    { name: 'Account 3', address: 'kaspatest:qr63dcf5mfexwg9kcx77gr6pgcy099m3963geaa4ed7pva2u9vcsk8583qkcl' },
   ]);
 
   const [accountAddress, setAccountAddress] = useState<string>('');
@@ -74,12 +89,14 @@ const Accounts: React.FC<AccountsProps> = ({ isLight, selectedAccount, passcode,
         {accounts.map((account, index) => (
           <div
             key={index}
-            className={`flex justify-between cursor-pointer items-center p-4 rounded-lg transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'} `}
+            className={`flex justify-between cursor-pointer items-center p-3 rounded-lg transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'} `}
             onClick={onAccountInfo}>
             <div className="flex items-center space-x-4">
               <div>
                 <h3 className={`text-base font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>{account.name}</h3>
-                <p className={`text-sm ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>{account.address}</p>
+                <p className={`text-sm ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
+                  {reduceKaspaAddress(account.address)}
+                </p>
               </div>
             </div>
           </div>
@@ -89,8 +106,10 @@ const Accounts: React.FC<AccountsProps> = ({ isLight, selectedAccount, passcode,
       {/* Add New Account Button */}
       <div className="w-full mt-6">
         <button
-          className={`w-full p-4 rounded-lg font-bold transition duration-300 ease-in-out ${isLight ? 'bg-[#70C7BA] text-white' : 'bg-[#70C7BA] text-white'} hover:scale-105`}
-          onClick={onAccountInfo}>
+          className={`w-full text-base mb-6 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
+            isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
+          } hover:scale-105`}
+          onClick={onNewAccount}>
           Add
         </button>
       </div>
