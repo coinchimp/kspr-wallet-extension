@@ -225,11 +225,12 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
         {[kasToken, ...tokensFromApi].map((token, index) => (
           <div
             key={index}
-            className={`flex justify-between items-center cursor-pointer p-4 rounded-lg ${
+            className={`flex justify-between items-center cursor-pointer p-3 rounded-lg ${
               isLight ? 'bg-gray-100' : 'bg-gray-800'
             } transition duration-300 ease-in-out ${
               isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'
-            }`}>
+            }`}
+            onClick={onActions}>
             <div className="flex items-center space-x-4">
               <img
                 src={`/popup/${getTokenImage(token.symbol)}`}

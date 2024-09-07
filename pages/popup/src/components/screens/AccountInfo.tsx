@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Balance from '@src/components/utils/Balance';
 import { decryptData } from '../../../../../chrome-extension/utils/Crypto';
 import { encryptedSeedStorage } from '@extension/storage';
-import PrivateKey from './PrivateKey';
 
 type AccountInfoProps = {
   isLight: boolean;
@@ -13,16 +11,23 @@ type AccountInfoProps = {
   passcode: string;
   onBack: () => void;
   onRemove: () => void;
+  onShowKey: () => void;
+  onShowSecret: () => void;
 };
 
-const AccountInfo: React.FC<AccountInfoProps> = ({ isLight, selectedAccount, passcode, onBack, onRemove }) => {
+const AccountInfo: React.FC<AccountInfoProps> = ({
+  isLight,
+  selectedAccount,
+  passcode,
+  onBack,
+  onRemove,
+  onShowKey,
+  onShowSecret,
+}) => {
   const [accountName, setAccountName] = useState(selectedAccount.name);
-  const [showSecretPhrase, setShowSecretPhrase] = useState(false);
-  const [showPrivateKey, setShowPrivateKey] = useState(false);
+  const accountAddressTemp = 'kaspatest:qz7d28dacezxdz066pzpkrrf2p45h2rr28evyedwmzlzer6kgvpvc36tjzvcj';
   const [accountAddress, setAccountAddress] = useState<string>('');
-  const privateKey = '1c51ef6e7fa1a007f8f12ddfee4c275010fc42a10e23aee37c0ab88dc594c6fd';
-  const secretPhrase =
-    'ritual exit feature face orient inflict hawk bike margin ridge ship ozone elevator bullet garden fitness close resource disorder ankle bright asset brisk jump';
+  const [AccountRenamed, setAccountRenamed] = useState(false);
 
   useEffect(() => {
     const loadAccountAddress = async () => {
@@ -59,7 +64,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({ isLight, selectedAccount, pas
   }, [passcode]);
 
   return (
-    <div className="flex flex-col items-center justify-start w-full h-full p-4 pt-6 overflow-y-auto">
+    <div className="flex flex-col items-center justify-start w-full h-full p-3 pt-1 overflow-y-auto">
       <div className="w-full flex items-center mb-4">
         <button
           className={`text-2xl p-4 w-12 h-12 mr-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out rounded-full font-bold text-[#70C7BA] flex items-center justify-center`}
@@ -71,7 +76,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({ isLight, selectedAccount, pas
       </div>
 
       {/* Change Account Name */}
-      <div className="w-full mb-6">
+      <div className="w-full mb-2">
         <label className={`block mb-2 text-sm font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
           Account Name
         </label>
@@ -82,49 +87,51 @@ const AccountInfo: React.FC<AccountInfoProps> = ({ isLight, selectedAccount, pas
           className={`w-full p-3 rounded-lg ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
         />
       </div>
-
+      {!AccountRenamed && (
+        <div className="w-full mb-4">
+          <button
+            className={`w-full text-base p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
+              isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
+            } hover:scale-105`}
+            onClick={() => setAccountRenamed(true)}>
+            Save Account Name
+          </button>
+        </div>
+      )}
       {/* Display Account Address */}
-      <div className="w-full mb-6">
+      <div className="w-full mb-4">
         <label className={`block mb-2 text-sm font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
           Account Address
         </label>
-        <p className={`p-3 rounded-lg ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}>
-          {selectedAccount.address}
+        <p
+          className={`p-3 rounded-lg ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
+          style={{ wordBreak: 'break-all' }}>
+          {accountAddressTemp}
         </p>
       </div>
 
       {/* Show Secret Phrase */}
-      <div className="w-full mb-4">
+      <div className="w-full mb-2">
         <button
-          className={`w-full p-4 rounded-lg font-bold transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'}`}
-          onClick={() => setShowSecretPhrase(!showSecretPhrase)}>
-          {showSecretPhrase ? 'Hide Secret Phrase' : 'Show Secret Phrase'}
+          className={`w-full text-base p-3 rounded-lg font-bold transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'}`}
+          onClick={onShowSecret}>
+          Secret Phrase
         </button>
-        {showSecretPhrase && (
-          <p className={`mt-2 p-3 rounded-lg ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}>
-            {secretPhrase}
-          </p>
-        )}
       </div>
 
       {/* Show Private Key */}
       <div className="w-full mb-4">
         <button
-          className={`w-full p-4 rounded-lg font-bold transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'}`}
-          onClick={() => setShowPrivateKey(!showPrivateKey)}>
-          {showPrivateKey ? 'Hide Private Key' : 'Show Private Key'}
+          className={`w-full text-base p-3 rounded-lg font-bold transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'}`}
+          onClick={onShowKey}>
+          Private Key
         </button>
-        {showPrivateKey && (
-          <p className={`mt-2 p-3 rounded-lg ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}>
-            {privateKey}
-          </p>
-        )}
       </div>
 
       {/* Remove Account Button */}
-      <div className="w-full mt-6">
+      <div className="w-full">
         <button
-          className={`w-full p-4 rounded-lg font-bold transition duration-300 ease-in-out ${isLight ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-red-500 text-white hover:bg-red-600'} hover:scale-105`}
+          className={`w-full text-base p-3 rounded-lg font-bold transition duration-300 ease-in-out ${isLight ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-red-500 text-white hover:bg-red-600'} hover:scale-105`}
           onClick={onRemove}>
           Remove Account
         </button>

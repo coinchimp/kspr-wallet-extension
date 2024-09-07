@@ -1,11 +1,55 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { decryptData } from '../../../../../chrome-extension/utils/Crypto';
+import { encryptedSeedStorage } from '@extension/storage';
 
 type SecurityProps = {
   isLight: boolean;
+  selectedAccount: {
+    name: string;
+    address: string;
+  };
+  passcode: string;
   onBack: () => void;
 };
 
-const Security: React.FC<SecurityProps> = ({ isLight, onBack }) => {
+const Security: React.FC<SecurityProps> = ({ isLight, selectedAccount, passcode, onBack }) => {
+  const [accountName, setAccountName] = useState(selectedAccount.name);
+  const [accountAddress, setAccountAddress] = useState<string>('');
+
+  useEffect(() => {
+    const loadAccountAddress = async () => {
+      try {
+        const encryptedSeed = await encryptedSeedStorage.getSeed();
+        if (!encryptedSeed) {
+          throw new Error('No seed found in storage.');
+        }
+
+        const seed = await decryptData(passcode, encryptedSeed);
+        const accounts = [
+          {
+            name: 'Account #1',
+            address: 'kaspatest:qzkstpzavl0xp479m573uhu3ujqj6u775vrtqrq0a7qzu0z2m89lq7hwkzgj4',
+          },
+          {
+            name: 'Account #2',
+            address: 'kaspatest:qz7d28dacezxdz066pzpkrrf2p45h2rr28evyedwmzlzer6kgvpvc36tjzvcj',
+          },
+        ];
+        console.log('Generated accounts:', accounts);
+
+        if (accounts && accounts.length > 0) {
+          setAccountAddress(accounts[0].address);
+        } else {
+          throw new Error('No accounts generated.');
+        }
+      } catch (error) {
+        console.error('Failed to load account address:', error);
+      }
+    };
+
+    loadAccountAddress();
+  }, [passcode]);
+
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [currentPasscode, setCurrentPasscode] = useState('');
   const [newPasscode, setNewPasscode] = useState('');
@@ -53,7 +97,10 @@ const Security: React.FC<SecurityProps> = ({ isLight, onBack }) => {
                 className={`w-full p-3 rounded-lg ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
               />
             </div>
-            <button className="w-full p-4 rounded-lg bg-green-500 text-white font-bold hover:bg-green-600 transition duration-300 ease-in-out">
+            <button
+              className={`w-full text-base mb-6 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
+                isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
+              } hover:scale-105`}>
               Save
             </button>
           </div>
@@ -79,7 +126,10 @@ const Security: React.FC<SecurityProps> = ({ isLight, onBack }) => {
                 ))}
               </ul>
             </div>
-            <button className="w-full p-4 rounded-lg bg-green-500 text-white font-bold hover:bg-green-600 transition duration-300 ease-in-out">
+            <button
+              className={`w-full text-base mb-6 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
+                isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
+              } hover:scale-105`}>
               Save
             </button>
           </div>
@@ -99,13 +149,15 @@ const Security: React.FC<SecurityProps> = ({ isLight, onBack }) => {
                 checked={isCheckboxChecked}
                 onChange={() => setIsCheckboxChecked(!isCheckboxChecked)}
                 className="mr-2"
+                style={{ accentColor: '#70C7BA' }}
               />
               <label className={`text-sm ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
                 I understand all the risks associated with this action.
               </label>
             </div>
+            <div className="w-full mt-6"></div>
             <button
-              className={`w-full p-4 rounded-lg ${isCheckboxChecked ? 'bg-red-500' : 'bg-gray-400 cursor-not-allowed'} text-white font-bold hover:bg-red-600 transition duration-300 ease-in-out`}
+              className={`w-full text-base p-4 rounded-lg ${isCheckboxChecked ? 'bg-red-500' : 'bg-gray-400 cursor-not-allowed'} text-white font-bold hover:bg-red-600 transition duration-300 ease-in-out`}
               disabled={!isCheckboxChecked}>
               Hard Reset
             </button>
