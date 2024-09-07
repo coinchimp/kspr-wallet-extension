@@ -15,9 +15,14 @@ import Settings from '@src/components/screens/Settings';
 import Actions from '@src/components/screens/Actions';
 import Accounts from '@src/components/screens/Accounts';
 import AccountInfo from '@src/components/screens/AccountInfo';
+import NewAccount from '@src/components/screens/NewAccount';
+import PrivateKey from '@src/components/screens/PrivateKey';
+import SecretExport from '@src/components/screens/SecretExport';
 import Security from '@src/components/screens/Security';
 import Network from '@src/components/screens/Network';
 import Contacts from '@src/components/screens/Contacts';
+import NewContact from '@src/components/screens/NewContact';
+import ContactInfo from '@src/components/screens/ContactInfo';
 import About from '@src/components/screens/About';
 
 import { encryptedSeedStorage } from '@extension/storage';
@@ -35,11 +40,16 @@ enum Screen {
   Settings,
   Actions,
   Accounts,
+  AccountInfo,
+  PrivateKey,
+  SecretExport,
+  NewAccount,
   Security,
   Network,
   Contacts,
+  NewContact,
+  ContactInfo,
   About,
-  AccountInfo,
 }
 
 const accounts = [
@@ -177,6 +187,7 @@ const Popup = () => {
             passcode={passcode}
             onBack={() => setCurrentScreen(Screen.Settings)}
             onAccountInfo={() => setCurrentScreen(Screen.AccountInfo)}
+            onNewAccount={() => setCurrentScreen(Screen.NewAccount)}
           />
         );
       case Screen.AccountInfo:
@@ -187,15 +198,37 @@ const Popup = () => {
             passcode={passcode}
             onBack={() => setCurrentScreen(Screen.Accounts)}
             onRemove={() => setCurrentScreen(Screen.AccountInfo)}
+            onShowKey={() => setCurrentScreen(Screen.PrivateKey)}
+            onShowSecret={() => setCurrentScreen(Screen.SecretExport)}
           />
         );
+      case Screen.NewAccount:
+        return <NewAccount isLight={isLight} onBack={() => setCurrentScreen(Screen.Accounts)} />;
       case Screen.Security:
         return (
           <Security
             isLight={isLight}
-            //selectedAccount={selectedAccount}
-            //passcode={passcode}
+            selectedAccount={selectedAccount}
+            passcode={passcode}
             onBack={() => setCurrentScreen(Screen.Settings)}
+          />
+        );
+      case Screen.PrivateKey:
+        return (
+          <PrivateKey
+            isLight={isLight}
+            selectedAccount={selectedAccount}
+            passcode={passcode}
+            onBack={() => setCurrentScreen(Screen.AccountInfo)}
+          />
+        );
+      case Screen.SecretExport:
+        return (
+          <SecretExport
+            isLight={isLight}
+            selectedAccount={selectedAccount}
+            passcode={passcode}
+            onBack={() => setCurrentScreen(Screen.AccountInfo)}
           />
         );
       case Screen.Network:
@@ -211,20 +244,17 @@ const Popup = () => {
         return (
           <Contacts
             isLight={isLight}
-            //selectedAccount={selectedAccount}
-            //passcode={passcode}
+            onContactInfo={() => setCurrentScreen(Screen.ContactInfo)}
+            onNewContact={() => setCurrentScreen(Screen.NewContact)}
             onBack={() => setCurrentScreen(Screen.Settings)}
           />
         );
+      case Screen.ContactInfo:
+        return <ContactInfo isLight={isLight} onBack={() => setCurrentScreen(Screen.Contacts)} />;
+      case Screen.NewContact:
+        return <NewContact isLight={isLight} onBack={() => setCurrentScreen(Screen.Contacts)} />;
       case Screen.About:
-        return (
-          <About
-            isLight={isLight}
-            //selectedAccount={selectedAccount}
-            //passcode={passcode}
-            onBack={() => setCurrentScreen(Screen.Settings)}
-          />
-        );
+        return <About isLight={isLight} onBack={() => setCurrentScreen(Screen.Settings)} />;
       case Screen.Send1:
         return (
           <Send1
@@ -301,7 +331,7 @@ const Popup = () => {
             {settingsButton()}
 
             {/* KSPR Title Centered */}
-            <h1 className={`text-3xl font-extrabold flex-1 text-center ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>
+            <h1 className={`text-3xl font-extrabold flex-1 text-center ${isLight ? 'text-gray-400' : 'text-gray-600'}`}>
               KSPR
             </h1>
 
