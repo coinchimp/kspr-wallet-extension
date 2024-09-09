@@ -57,29 +57,26 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
     change24h: -1.23, // Add the change value for Kaspa
   };
 
-  const totalUSD = [kasToken, ...tokensFromApi].reduce(
-    (sum, token) => sum + token.balance * token.exchangeRate,
-    0
-  );
+  const totalUSD = [kasToken, ...tokensFromApi].reduce((sum, token) => sum + token.balance * token.exchangeRate, 0);
   const totalChange24h =
     totalUSD !== 0
       ? [kasToken, ...tokensFromApi].reduce(
           (sum, token) => sum + token.change24h * token.balance * token.exchangeRate,
-          0
+          0,
         ) / totalUSD
       : 0;
 
   // Fetch and display accounts progressively from the background script
   useEffect(() => {
     const loadAccounts = async () => {
-      try {    
+      try {
         const encryptedSeed = await encryptedSeedStorage.getSeed();
         if (!encryptedSeed) throw new Error('No seed found in storage.');
-    
+
         const seed = await decryptData(passcode, encryptedSeed);
-    
+
         // Send message to background script to start scanning, and update state progressively
-        chrome.runtime.sendMessage({ type: 'GET_AND_STORE_ACCOUNTS', seed }, (response) => {
+        chrome.runtime.sendMessage({ type: 'GET_AND_STORE_ACCOUNTS', seed }, response => {
           if (response.error) {
             console.error('Error fetching accounts:', response.error);
           } else {
@@ -113,9 +110,9 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
         setSelectedAccount((prev: any) => prev || message.accounts[0]); // Ensure the first account is selected
       }
     };
-  
+
     chrome.runtime.onMessage.addListener(handleMessage);
-  
+
     // Cleanup listener on unmount
     return () => {
       chrome.runtime.onMessage.removeListener(handleMessage);
@@ -148,24 +145,19 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
 
       // Fetch Kaspa balance if not yet fetched for the selected account
       if (!kasBalance) {
-        chrome.runtime.sendMessage(
-          { type: 'FETCH_BALANCE', address: selectedAccount.address },
-          (response) => {
-            if (response.error) {
-              console.error('Error fetching balance:', response.error);
-            } else {
-              setKasBalance(response.balance); // Set the Kaspa balance
-            }
+        chrome.runtime.sendMessage({ type: 'FETCH_BALANCE', address: selectedAccount.address }, response => {
+          if (response.error) {
+            console.error('Error fetching balance:', response.error);
+          } else {
+            setKasBalance(response.balance); // Set the Kaspa balance
           }
-        );
+        });
       }
     }
   }, [selectedAccount, kasBalance]);
 
   const getTokenImage = (symbol: string) => {
-    const token = tokensData.find(
-      (token) => token.symbol.toLowerCase() === symbol.toLowerCase()
-    );
+    const token = tokensData.find(token => token.symbol.toLowerCase() === symbol.toLowerCase());
     return token ? token.image : `ksprwallet${Math.floor(Math.random() * 10) + 1}.jpg`; // Random default image if not found
   };
 
@@ -173,10 +165,7 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
     <div className="flex flex-col items-center justify-start w-full h-full p-4 pt-6 overflow-y-auto">
       {/* Display account balance and address once selected */}
       {selectedAccount && kasBalance === null && (
-        <Balance
-          address={selectedAccount.address}
-          onBalanceUpdate={(balance) => setKasBalance(balance)}
-        />
+        <Balance address={selectedAccount.address} onBalanceUpdate={balance => setKasBalance(balance)} />
       )}
 
       {/* UI rendering code */}
@@ -184,11 +173,8 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
         <div className="flex items-center justify-center space-x-2 mb-4">
           <div className="relative">
             <button
-              className={`text-sm font-bold cursor-pointer ${
-                isLight ? 'text-gray-900' : 'text-gray-200'
-              }`}
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-            >
+              className={`text-sm font-bold cursor-pointer ${isLight ? 'text-gray-900' : 'text-gray-200'}`}
+              onClick={() => setDropdownOpen(!dropdownOpen)}>
               {selectedAccount ? selectedAccount.name : 'Loading...'}
             </button>
 
@@ -196,22 +182,18 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
               <ul
                 className={`absolute mt-2 w-48 rounded-md shadow-lg ${
                   isLight ? 'bg-slate-50 text-gray-900' : 'bg-gray-800 text-gray-200'
-                }`}
-              >
+                }`}>
                 {accounts.map((account, index) => (
                   <li
                     key={index}
                     className={`px-4 py-2 cursor-pointer transition duration-300 ease-in-out ${
-                      isLight
-                        ? 'hover:bg-gray-200 hover:text-gray-900'
-                        : 'hover:bg-gray-700 hover:text-gray-100'
+                      isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'
                     }`}
                     onClick={() => {
                       setSelectedAccount(account);
                       setKasBalance(null); // Reset Kaspa balance fetch for new account
                       setDropdownOpen(false);
-                    }}
-                  >
+                    }}>
                     {account.name}
                   </li>
                 ))}
@@ -227,29 +209,16 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
                 navigator.clipboard.writeText(selectedAccount.address);
                 console.log(`Copied address: ${selectedAccount.address}`);
               }
-            }}
-          >
-            <img
-              src="/popup/icons/copy.svg"
-              alt="Copy Address"
-              className="h-6 w-6"
-            />
+            }}>
+            <img src="/popup/icons/copy.svg" alt="Copy Address" className="h-6 w-6" />
           </button>
         </div>
 
         {/* Total Balance */}
-        <h1
-          className={`text-3xl font-bold ${
-            isLight ? 'text-gray-900' : 'text-gray-200'
-          }`}
-        >
-          ${totalUSD.toFixed(2)}
+        <h1 className={`text-3xl font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
+          {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalUSD.toFixed(2))}
         </h1>
-        <p
-          className={`text-lg ${
-            totalChange24h >= 0 ? 'text-green-500' : 'text-red-500'
-          }`}
-        >
+        <p className={`text-lg ${totalChange24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
           {totalChange24h >= 0 ? '+' : ''}
           {totalChange24h.toFixed(2)}%
         </p>
@@ -263,23 +232,10 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
               className={`rounded-full p-4 ${
                 isLight ? 'bg-gray-100' : 'bg-gray-800'
               } mb-2 hover:scale-105 transition duration-300 ease-in-out ${
-                isLight
-                  ? 'hover:bg-gray-200 hover:text-gray-900'
-                  : 'hover:bg-gray-700 hover:text-gray-100'
+                isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'
               }`}
-              onClick={
-                action === 'Send'
-                  ? onSend
-                  : action === 'Receive'
-                  ? onReceive
-                  : undefined
-              }
-            >
-              <img
-                src={`/popup/icons/${action.toLowerCase()}.svg`}
-                alt={action}
-                className="h-8 w-8"
-              />
+              onClick={action === 'Send' ? onSend : action === 'Receive' ? onReceive : undefined}>
+              <img src={`/popup/icons/${action.toLowerCase()}.svg`} alt={action} className="h-8 w-8" />
             </div>
 
             {/* Notification badge for "Compound" */}
@@ -289,13 +245,7 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
               </div>
             )}
 
-            <p
-              className={`text-sm ${
-                isLight ? 'text-gray-900' : 'text-gray-200'
-              }`}
-            >
-              {action}
-            </p>
+            <p className={`text-sm ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>{action}</p>
           </div>
         ))}
       </div>
@@ -308,12 +258,9 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
             className={`flex justify-between items-center cursor-pointer p-3 rounded-lg ${
               isLight ? 'bg-gray-100' : 'bg-gray-800'
             } transition duration-300 ease-in-out ${
-
-              isLight
-                ? 'hover:bg-gray-200 hover:text-gray-900'
-                : 'hover:bg-gray-700 hover:text-gray-100'
+              isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'
             }`}
-          onClick={onActions}>
+            onClick={onActions}>
             <div className="flex items-center space-x-4">
               <img
                 src={getTokenImage(token.symbol)}
@@ -323,32 +270,18 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
               />
 
               <div>
-                <h3
-                  className={`text-base text-left font-bold ${
-                    isLight ? 'text-gray-900' : 'text-gray-200'
-                  }`}
-                >
+                <h3 className={`text-base text-left font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
                   {token.name}
                 </h3>
-                <p
-                  className={`text-xs ${
-                    isLight ? 'text-gray-600' : 'text-gray-400'
-                  }`}
-                >
+                <p className={`text-xs ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
                   {formatBalance(token.balance)} {token.symbol}
                 </p>
               </div>
             </div>
 
             <div className="text-right">
-              <h3
-                className={`text-sm font-bold ${
-                  isLight ? 'text-gray-900' : 'text-gray-200'
-                }`}
-              >
-                {token.exchangeRate
-                  ? `$${(token.balance * token.exchangeRate).toFixed(2)}`
-                  : '$-'}
+              <h3 className={`text-sm font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
+                {token.exchangeRate ? `$${(token.balance * token.exchangeRate).toFixed(2)}` : '$-'}
               </h3>
               <p
                 className={`text-sm ${
@@ -357,15 +290,10 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
                       ? 'text-green-500'
                       : 'text-red-500'
                     : isLight
-                    ? 'text-gray-400'
-                    : 'text-gray-600'
-                }`}
-              >
-                {token.exchangeRate
-                  ? `${token.change24h >= 0 ? '+' : ''}${token.change24h.toFixed(
-                      2
-                    )}%`
-                  : '-%'}
+                      ? 'text-gray-400'
+                      : 'text-gray-600'
+                }`}>
+                {token.exchangeRate ? `${token.change24h >= 0 ? '+' : ''}${token.change24h.toFixed(2)}%` : '-%'}
               </p>
             </div>
           </div>

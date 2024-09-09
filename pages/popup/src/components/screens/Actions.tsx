@@ -266,6 +266,7 @@ const Actions: React.FC<ActionsProps> = ({ isLight, selectedAccount, passcode, o
         <input
           type="text"
           value={search}
+          style={{ outline: 'none' }}
           onChange={e => setSearch(e.target.value)}
           className={`w-full p-3 rounded-lg ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
           placeholder="Search by token, transaction, or address..."

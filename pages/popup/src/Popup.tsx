@@ -24,6 +24,7 @@ import Contacts from '@src/components/screens/Contacts';
 import NewContact from '@src/components/screens/NewContact';
 import ContactInfo from '@src/components/screens/ContactInfo';
 import About from '@src/components/screens/About';
+import ImportKey from '@src/components/screens/ImportKey';
 
 import { encryptedSeedStorage } from '@extension/storage';
 
@@ -50,6 +51,7 @@ enum Screen {
   NewContact,
   ContactInfo,
   About,
+  ImportKey,
 }
 
 const accounts = [
@@ -188,6 +190,7 @@ const Popup = () => {
             onBack={() => setCurrentScreen(Screen.Settings)}
             onAccountInfo={() => setCurrentScreen(Screen.AccountInfo)}
             onNewAccount={() => setCurrentScreen(Screen.NewAccount)}
+            onImportKey={() => setCurrentScreen(Screen.ImportKey)}
           />
         );
       case Screen.AccountInfo:
@@ -204,6 +207,8 @@ const Popup = () => {
         );
       case Screen.NewAccount:
         return <NewAccount isLight={isLight} onBack={() => setCurrentScreen(Screen.Accounts)} />;
+      case Screen.ImportKey:
+        return <ImportKey isLight={isLight} onBack={() => setCurrentScreen(Screen.Accounts)} />;
       case Screen.Security:
         return (
           <Security

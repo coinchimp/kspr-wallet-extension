@@ -67,6 +67,7 @@ const Secret2: React.FC<{ isLight: boolean; onFinish: (passcode: string) => void
                 <input
                   type="text"
                   value={inputWords[i]}
+                  style={{ outline: 'none' }}
                   onChange={e => {
                     const newWords = [...inputWords];
                     newWords[i] = e.target.value;

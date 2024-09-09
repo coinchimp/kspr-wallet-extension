@@ -60,14 +60,17 @@ const Send1: React.FC<{
       token.symbol.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
+  const estimatedTransactionFee = 0.003;
+  const [priorityFee, setPriorityFee] = useState<number>(0);
+
   const handleTokenSelection = (token: Token) => {
     setSelectedToken(token);
   };
 
   if (selectedToken) {
     return (
-      <div className="flex flex-col items-center justify-start w-full h-full p-4 pt-6 overflow-y-auto">
-        <div className="w-full flex items-center mb-4">
+      <div className="flex flex-col items-center justify-start w-full h-full p-2 pt-2 overflow-y-auto">
+        <div className="w-full flex items-center mb-2">
           <button
             className={`text-2xl p-4 w-12 h-12 mr-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out rounded-full font-bold text-[#70C7BA] flex items-center justify-center`}
             onClick={onBack}>
@@ -81,7 +84,7 @@ const Send1: React.FC<{
         <img
           src={`/popup/${selectedToken.symbol.toLowerCase()}.png`}
           alt={selectedToken.name}
-          className="h-20 w-20 my-4"
+          className="h-16 w-16 my-4"
           onError={handleImageError}
         />
 
@@ -90,8 +93,14 @@ const Send1: React.FC<{
             amount * selectedToken.exchangeRate,
           )}
         </div>
-
-        <div className="w-full mb-4 relative">
+        <div className="w-full mb-2 text-right text-xs text-gray-600">
+          Available:{' '}
+          {selectedToken.balance - amount - estimatedTransactionFee > 0
+            ? (selectedToken.balance - amount - estimatedTransactionFee).toFixed(6)
+            : '0'}{' '}
+          {selectedToken.symbol}
+        </div>
+        <div className="w-full mb-2 relative">
           <div className="relative w-full mb-4">
             <input
               type="number"
@@ -99,6 +108,7 @@ const Send1: React.FC<{
               className={`w-full p-2 pr-16 rounded ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
               value={amount}
               onChange={e => setAmount(parseFloat(e.target.value) || 0)}
+              style={{ outline: 'none' }}
             />
             <button
               className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-sm font-bold p-2 ${isLight ? 'text-gray-900' : 'text-gray-200'}`}
@@ -114,6 +124,7 @@ const Send1: React.FC<{
           <input
             type="text"
             placeholder="Recipient Wallet Address"
+            style={{ outline: 'none' }}
             value={selectedContact ? `${selectedContact} [...${recipientAddress.slice(-10)}]` : recipientAddress}
             className={`w-full p-2 pr-12 rounded ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
             onChange={e => {
@@ -124,7 +135,7 @@ const Send1: React.FC<{
 
           {!selectedContact && (
             <button
-              className="absolute w-8 h-8 right-2 top-1/2 transform -translate-y-1/2 text-sm font-bold p-2 rounded-full bg-[#70C7BA]"
+              className="text-white absolute w-8 h-8 right-2 top-1/2 transform -translate-y-1/2 text-sm font-bold p-2 rounded-full bg-[#70C7BA] flex items-center justify-center"
               onClick={() => setShowContactsDropdown(!showContactsDropdown)}>
               +
             </button>
@@ -132,22 +143,22 @@ const Send1: React.FC<{
 
           {selectedContact && (
             <button
-              className="absolute w-8 h-8 right-2 top-1/2 transform -translate-y-1/2 text-sm font-bold p-2 rounded-full bg-red-700 text-white"
+              className="absolute w-8 h-8 right-2 top-1/2 transform -translate-y-1/2 text-sm font-bold p-2 rounded-full bg-red-700 text-white flex items-center justify-center"
               onClick={() => {
                 setSelectedContact(null);
                 setRecipientAddress('');
               }}>
-              X
+              x
             </button>
           )}
 
           {showContactsDropdown && (
             <div
-              className={`absolute z-10 w-full mt-1 bg-white shadow-lg rounded-lg max-h-40 overflow-y-auto ${isLight ? 'bg-gray-100' : 'bg-gray-800'}`}>
+              className={`absolute z-10 w-full mt-1 shadow-lg rounded-lg max-h-40 overflow-y-auto ${isLight ? 'bg-gray-100' : 'bg-gray-800'}`}>
               {contacts.map((contact, index) => (
                 <div
                   key={index}
-                  className={`p-2 cursor-pointer hover:bg-gray-200 ${isLight ? 'text-gray-900' : 'text-gray-200'}`}
+                  className={`p-2 cursor-pointer hover:${isLight ? 'bg-gray-200' : 'bg-gray-700'} ${isLight ? 'text-gray-900' : 'text-gray-200'}`}
                   onClick={() => {
                     setSelectedContact(contact.name);
                     setRecipientAddress(contact.address);
@@ -159,14 +170,27 @@ const Send1: React.FC<{
             </div>
           )}
         </div>
+        <div className="w-full mb-2 text-left text-xs text-gray-600">
+          Estimated Transaction Fee: {estimatedTransactionFee.toFixed(3)} KAS
+        </div>
+        <div className="relative w-full mb-4">
+          <input
+            type="number"
+            placeholder="Priority Fee (optional)" // Always shows the placeholder when the input is empty
+            value={priorityFee || ''} // If priorityFee is 0 or not a valid number, show an empty string
+            step="0.001" // Allows incrementing/decrementing in 0.001 steps
+            style={{ outline: 'none' }}
+            className={`w-full p-2 rounded ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
+            onChange={e => setPriorityFee(parseFloat(e.target.value) || 0)}
+          />
+        </div>
 
         {/* Ensure the 'Next' button is visible */}
-        <div className="w-full mt-6 flex justify-center">
+        <div className="w-full mt-2 flex justify-center">
           <button
-            className={
-              'font-extrabold text-xl py-2 px-6 rounded shadow hover:scale-105 text-white w-[85%] ' +
-              (isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white')
-            }
+            className={`w-full text-base p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
+              isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
+            } hover:scale-105`}
             onClick={() => {
               if (selectedToken && amount > 0 && recipientAddress) {
                 onNext(selectedToken, amount, recipientAddress);
@@ -189,6 +213,7 @@ const Send1: React.FC<{
       <input
         type="text"
         placeholder="Search Token"
+        style={{ outline: 'none' }}
         className={`w-full p-2 mb-4 rounded ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
         value={searchQuery}
         onChange={e => setSearchQuery(e.target.value)}

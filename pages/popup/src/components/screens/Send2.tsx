@@ -31,12 +31,14 @@ const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
   e.currentTarget.onerror = tryNextImage; // Set the onError to try the next image
   tryNextImage(); // Start the process
 };
+const estimatedFee = 0.003;
+const priorityFee = 0.001;
 
 const Send2: React.FC<Send2Props> = ({ isLight, passcode, onBack, selectedToken, amount, recipientAddress }) => {
   const currentDate = new Date().toLocaleString(); // Get the current date and time
 
   return (
-    <div className="flex flex-col items-center justify-start w-full h-full p-4 pt-6 overflow-y-auto">
+    <div className="flex flex-col items-center justify-start w-full h-full p-4 pt-2 overflow-y-auto">
       <div className="w-full flex items-center mb-4">
         <button
           className={`text-2xl p-4 w-12 h-12 mr-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out rounded-full font-bold text-[#70C7BA] flex items-center justify-center`}
@@ -50,32 +52,43 @@ const Send2: React.FC<Send2Props> = ({ isLight, passcode, onBack, selectedToken,
       <img
         src={`/popup/${selectedToken.symbol.toLowerCase()}.png`}
         alt={selectedToken.name}
-        className="h-20 w-20 my-4"
+        className="h-16 w-16 my-4"
         onError={handleImageError}
       />
 
-      <div className="text-center mb-6">
+      <div className="text-center mb-2">
         <div className={`text-2xl font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
-          {amount} {selectedToken.symbol}
+          {new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount)}{' '}
+          {selectedToken.symbol}
         </div>
         <div className={`text-lg ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
-          {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
-            amount * selectedToken.exchangeRate,
-          )}
+          {selectedToken.exchangeRate
+            ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
+                amount * selectedToken.exchangeRate,
+              )
+            : '$-'}
         </div>
+
+        {/* Add Estimated Fee and Priority Fee */}
+        <div className={`text-sm mt-2 ${isLight ? 'text-gray-900' : 'text-gray-200'} text-center`}>
+          <p>Estimated Fee: {estimatedFee.toFixed(3)} KAS</p>
+          <p>Priority Fee: {priorityFee.toFixed(3)} KAS</p>
+        </div>
+
         <div
-          className={`text-base mt-2 break-words ${isLight ? 'text-gray-900' : 'text-gray-200'}`}
+          className={`text-sm mt-2 ${isLight ? 'text-gray-900' : 'text-gray-200'} text-center mx-auto`}
           style={{ maxWidth: '80%' }}>
-          To: {recipientAddress}
+          <span className="font-bold">Sent to:</span>
+          <p className="break-all">{recipientAddress}</p>
         </div>
-        <div className={`text-base mt-2 ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>{currentDate}</div>
+
+        <div className={`text-base font-bold mt-2 ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>{currentDate}</div>
       </div>
 
       <button
-        className={
-          'mt-2 font-extrabold text-xl py-2 px-6 rounded shadow hover:scale-105 text-white w-[85%] ' +
-          (isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white')
-        }
+        className={`w-full text-base p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
+          isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
+        } hover:scale-105`}
         onClick={() => {
           // Handle the confirm button click (example functionality)
           console.log('Confirm button clicked');

@@ -86,6 +86,7 @@ const Unlock: React.FC<UnlockProps> = ({ onUnlock, isLight, isSettingPasscode = 
       <input
         ref={inputRef}
         type="password"
+        style={{ outline: 'none' }}
         className={`w-full py-2 px-4 text-lg font-bold rounded-md mb-4 ${
           isLight
             ? isIncorrect
@@ -104,6 +105,7 @@ const Unlock: React.FC<UnlockProps> = ({ onUnlock, isLight, isSettingPasscode = 
       {isSettingPasscode && (
         <input
           type="password"
+          style={{ outline: 'none' }}
           className={`w-full py-2 px-4 text-lg font-bold rounded-md mb-6 ${
             isLight
               ? isIncorrect
@@ -129,7 +131,7 @@ const Unlock: React.FC<UnlockProps> = ({ onUnlock, isLight, isSettingPasscode = 
       )}
 
       <button
-        className={`font-extrabold text-xl py-2 px-6 rounded shadow hover:scale-105 text-white w-[70%] ${
+        className={`font-bold text-base py-2 px-6 rounded shadow hover:scale-105 text-white w-[90%] ${
           isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
         }`}
         onClick={() => {

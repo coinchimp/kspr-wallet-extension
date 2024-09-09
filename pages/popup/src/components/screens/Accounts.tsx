@@ -13,6 +13,7 @@ type AccountsProps = {
   onBack: () => void;
   onAccountInfo: () => void;
   onNewAccount: () => void;
+  onImportKey: () => void;
 };
 
 const reduceKaspaAddress = (address: string): string => {
@@ -22,6 +23,11 @@ const reduceKaspaAddress = (address: string): string => {
   return address;
 };
 
+const getRandomTurquoiseColor = () => {
+  const turquoiseColors = ['#40E0D0', '#48D1CC', '#00CED1', '#20B2AA', '#2C887A', '#2C8888', '#25AD92', '#278C89'];
+  return turquoiseColors[Math.floor(Math.random() * turquoiseColors.length)];
+};
+
 const Accounts: React.FC<AccountsProps> = ({
   isLight,
   selectedAccount,
@@ -29,6 +35,7 @@ const Accounts: React.FC<AccountsProps> = ({
   onBack,
   onAccountInfo,
   onNewAccount,
+  onImportKey,
 }) => {
   const [accounts, setAccounts] = useState([
     { name: 'Account 1', address: 'kaspatest:qr63dcf5mfexwg9kcx77gr6pgcy099m3963geaa4ed7pva2u9vcsk8583qkcl' },
@@ -92,9 +99,14 @@ const Accounts: React.FC<AccountsProps> = ({
             className={`flex justify-between cursor-pointer items-center p-3 rounded-lg transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'} `}
             onClick={onAccountInfo}>
             <div className="flex items-center space-x-4">
+              <div
+                className="rounded-full h-11 w-11 flex items-center justify-center space-x-4"
+                style={{ backgroundColor: getRandomTurquoiseColor() }}>
+                <span className="text-white text-xl font-bold">{account.name.charAt(0).toUpperCase()}</span>
+              </div>
               <div>
-                <h3 className={`text-base font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>{account.name}</h3>
-                <p className={`text-sm ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
+                <h3 className={`text-sm font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>{account.name}</h3>
+                <p className={`text-xs ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
                   {reduceKaspaAddress(account.address)}
                 </p>
               </div>
@@ -106,11 +118,22 @@ const Accounts: React.FC<AccountsProps> = ({
       {/* Add New Account Button */}
       <div className="w-full mt-6">
         <button
-          className={`w-full text-base mb-6 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
+          className={`w-full text-base mb-2 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
             isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
           } hover:scale-105`}
           onClick={onNewAccount}>
           Add
+        </button>
+      </div>
+
+      {/* Add New Account Button */}
+      <div className="w-full mt-2">
+        <button
+          className={`w-full text-base mb-6 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
+            isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
+          } hover:scale-105`}
+          onClick={onImportKey}>
+          Import Private Key
         </button>
       </div>
     </div>

@@ -84,6 +84,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
           type="text"
           value={accountName}
           onChange={e => setAccountName(e.target.value)}
+          style={{ outline: 'none' }}
           className={`w-full p-3 rounded-lg ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
         />
       </div>

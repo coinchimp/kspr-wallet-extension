@@ -96,6 +96,7 @@ const Import: React.FC<{ isLight: boolean; onImport: (passcode: string) => void 
                 <input
                   type="text"
                   value={inputWords[i]}
+                  style={{ outline: 'none' }}
                   onChange={e => handleWordChange(i, e.target.value)}
                   className={`text-sm font-medium ${isLight ? 'text-gray-900' : 'text-gray-500'} w-full py-0 px-2 rounded border border-gray-300`}
                 />
