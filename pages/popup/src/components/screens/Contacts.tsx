@@ -28,7 +28,7 @@ const reduceKaspaAddress = (address: string): string => {
 
 // Function to generate a random turquoise tone color
 const getRandomTurquoiseColor = () => {
-  const turquoiseColors = ['#AFEEEE', '#40E0D0', '#48D1CC', '#00CED1', '#20B2AA'];
+  const turquoiseColors = ['#40E0D0', '#48D1CC', '#00CED1', '#20B2AA', '#2C887A', '#2C8888', '#25AD92', '#278C89'];
   return turquoiseColors[Math.floor(Math.random() * turquoiseColors.length)];
 };
 

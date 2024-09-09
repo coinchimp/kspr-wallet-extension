@@ -2,10 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden; /* Prevent body from scrolling */
+}
+
 body {
   width: 350px;
   height: 610px;
-  margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
     'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -21,11 +27,27 @@ code {
 /* Hide the scrollbar for all elements */
 body,
 html {
-  overflow-y: scroll; /* Ensures content can still scroll */
+  overflow-y: scroll; /* Allows content to scroll if necessary */
   scrollbar-width: none; /* For Firefox */
 }
 
-body::-webkit-scrollbar,
-html::-webkit-scrollbar {
-  display: none; /* For Chrome, Safari, and Opera */
+::-webkit-scrollbar {
+  display: none; /* Hide scrollbar in Chrome, Safari, Edge */
+}
+
+html {
+  -ms-overflow-style: none; /* Hide scrollbar in IE */
+}
+
+/* For any scrollable elements inside */
+.scrollable-element {
+  overflow-y: auto;
+  overscroll-behavior: contain; /* Prevent overscroll bounce */
+  max-height: 100%;
+}
+
+/* Prevent scroll bounce (mobile Safari) */
+html, body {
+  overscroll-behavior: none; /* Prevent bouncing effect on mobile */
+  touch-action: none; /* Prevent default touch scrolling behavior */
 }

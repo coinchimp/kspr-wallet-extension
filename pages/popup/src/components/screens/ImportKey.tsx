@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { decryptData } from '../../../../../chrome-extension/utils/Crypto';
 import { encryptedSeedStorage } from '@extension/storage';
 
-type NewContactProps = {
+type ImportKeyProps = {
   isLight: boolean;
   onBack: () => void;
 };
 
-const NewContact: React.FC<NewContactProps> = ({ isLight, onBack }) => {
+const ImportKey: React.FC<ImportKeyProps> = ({ isLight, onBack }) => {
   return (
     <div className="flex flex-col items-center justify-start w-full h-full p-3 pt-1 overflow-y-auto">
       <div className="w-full flex items-center mb-4">
@@ -17,13 +17,13 @@ const NewContact: React.FC<NewContactProps> = ({ isLight, onBack }) => {
         >
           ←
         </button>
-        <h1 className={`text-2xl font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>New Contact</h1>
+        <h1 className={`text-2xl font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>Import Account</h1>
       </div>
 
-      {/* Change Account Name */}
+      {/* Account Name */}
       <div className="w-full mb-2">
         <label className={`block mb-2 text-sm font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
-          Contact Name
+          Account Name
         </label>
         <input
           type="text"
@@ -31,28 +31,27 @@ const NewContact: React.FC<NewContactProps> = ({ isLight, onBack }) => {
           className={`w-full p-3 rounded-lg ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
         />
       </div>
-
       <div className="w-full mb-2">
         <label className={`block mb-2 text-sm font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
-          Wallet Address
+          Private Key
         </label>
-        <input
-          type="text"
+        <textarea
+          rows={3}
           style={{ outline: 'none' }}
-          className={`w-full p-3 rounded-lg ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
+          className={`w-full p-3 rounded-lg resize-none ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
         />
       </div>
 
-      <div className="w-full mb-4">
+      <div className="w-full mt-4">
         <button
           className={`w-full text-base p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
             isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
           } hover:scale-105`}>
-          Save New Contact
+          Save New Account
         </button>
       </div>
     </div>
   );
 };
 
-export default NewContact;
+export default ImportKey;
