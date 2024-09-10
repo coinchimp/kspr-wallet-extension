@@ -12,7 +12,52 @@ exampleThemeStorage.get().then(theme => {
 let rpcClient: any = null;
 let wasmInitialized = false;
 const SOMPI_MULTIPLIER = BigInt(100000000);
-const testnetRpcUrls = ['https://1.rpc-kspr.eu', 'https://2.rpc-kspr.eu', 'https://3.rpc-kspr.eu'];
+const testnetRpcUrlsEU = ['https://1.rpc-kspr.eu', 'https://2.rpc-kspr.eu', 'https://3.rpc-kspr.eu'];
+const testnetRpcUrlsUS = ['https://1.rpc-kspr.us', 'https://2.rpc-kspr.us', 'https://3.rpc-kspr.us'];
+let testnetRpcUrls: string[] = [];
+
+async function ping(url: string, timeout = 5000): Promise<number> {
+  const controller = new AbortController();
+  const signal = controller.signal;
+
+  const start = Date.now();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(url, { signal });
+    if (response.ok) {
+      const end = Date.now();
+      clearTimeout(timeoutId);
+      return end - start; // Return ping time in milliseconds
+    }
+    throw new Error(`Failed to ping ${url}`);
+  } catch (error) {
+    console.error(error);
+    clearTimeout(timeoutId);
+    return Infinity; // Return a very high ping time if error occurs
+  }
+}
+
+function getRandomUrl(urls: string[]): string {
+  const randomIndex = Math.floor(Math.random() * urls.length);
+  return urls[randomIndex];
+}
+
+async function compareRpcPings() {
+  const randomEuRpc = getRandomUrl(testnetRpcUrlsEU);
+  const randomUsRpc = getRandomUrl(testnetRpcUrlsUS);
+
+  const euPing = await ping(randomEuRpc.concat('/v2/kaspa/testnet-10/tls/wrpc/borsh'));
+  const usPing = await ping(randomUsRpc.concat('/v2/kaspa/testnet-10/tls/wrpc/borsh'));
+
+  console.log(`EU RPC Ping: ${euPing} ms, US RPC Ping: ${usPing} ms`);
+
+  if (euPing < usPing) {
+    testnetRpcUrls = [...testnetRpcUrlsEU];
+  } else {
+    testnetRpcUrls = [...testnetRpcUrlsUS];
+  }
+}
 
 async function ensureWasmModuleInitialized() {
   if (!wasmInitialized) {
@@ -39,6 +84,10 @@ async function ensureWasmModuleInitialized() {
 
 async function ensureRpcClientConnected() {
   try {
+    if (testnetRpcUrls.length == 0) {
+      await compareRpcPings();
+      console.log('Selected RPC URLs:', testnetRpcUrls);
+    }
     if (!rpcClient || !rpcClient.isConnected) {
       console.log('RPC client not connected, initializing...');
       await ensureWasmModuleInitialized();
@@ -132,7 +181,6 @@ async function generateMnemonic(): Promise<string> {
 
 // Helper to progressively return accounts
 async function getAndStoreAccounts(seed: string, numAccounts: number = 16) {
-
   const networkType = NetworkType.Testnet;
   const mnemonic = new Mnemonic(seed);
   const xPrv = new XPrv(mnemonic.toSeed());
@@ -269,10 +317,14 @@ function getLastUsedAddressIndex(utxos: InstanceType<typeof UtxoEntryReference>[
 }
 
 function timeout(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function trackAddressesWithTimeout(utxoContext: InstanceType<typeof UtxoContext>, addresses: string[], timeoutMs: number = 60000) {
+async function trackAddressesWithTimeout(
+  utxoContext: InstanceType<typeof UtxoContext>,
+  addresses: string[],
+  timeoutMs: number = 60000,
+) {
   return Promise.race([
     utxoContext.trackAddresses(addresses),
     timeout(timeoutMs).then(() => {
