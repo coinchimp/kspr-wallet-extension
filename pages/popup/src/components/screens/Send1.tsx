@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 
-// Define the Token type
+const jsonUrl =
+  'https://raw.githubusercontent.com/coinchimp/kspr-wallet-extension/main/chrome-extension/public/tokens.json';
+
 type Token = {
   name: string;
   symbol: string;
@@ -16,20 +18,14 @@ const contacts = [
 ];
 
 const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-  const maxIndex = 2;
+  const randomImageNumber = Math.floor(Math.random() * 4) + 1;
 
-  const getRandomIndex = () => {
-    return Math.floor(Math.random() * maxIndex) + 1;
-  };
+  // Full fallback image URL from GitHub repository
+  const fallbackImageUrl = `https://raw.githubusercontent.com/coinchimp/kspr-wallet-extension/main/chrome-extension/public/token-logos/ksprwallet${randomImageNumber}.png`;
 
-  const tryNextImage = () => {
-    const randomIndex = getRandomIndex();
-    e.currentTarget.src = `/popup/ksprwallet${randomIndex}.png`;
-    e.currentTarget.onerror = null;
-  };
-
-  e.currentTarget.onerror = tryNextImage;
-  tryNextImage();
+  // Set fallback image URL directly if not already set
+  e.currentTarget.src = fallbackImageUrl;
+  e.currentTarget.onerror = null; // Stop further error handling after retry
 };
 
 const tokens: Token[] = [
@@ -50,9 +46,27 @@ const Send1: React.FC<{
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [amount, setAmount] = useState<number>(0);
   const [recipientAddress, setRecipientAddress] = useState('');
+  const [tokensData, setTokensData] = useState<any[]>([]); // Store fetched token images
 
   const [showContactsDropdown, setShowContactsDropdown] = useState(false);
   const [selectedContact, setSelectedContact] = useState<string | null>(null);
+
+  const fetchTokensImages = async () => {
+    try {
+      const response = await fetch(jsonUrl);
+      const data = await response.json();
+      setTokensData(data.tokens); // Store tokens data
+    } catch (error) {
+      console.error('Error fetching tokens:', error);
+    }
+  };
+
+  const getTokenImage = (symbol: string) => {
+    const token = tokensData.find(token => token.symbol.toLowerCase() === symbol.toLowerCase());
+
+    // Return the image if found, otherwise return undefined
+    return token ? token.image : '';
+  };
 
   const filteredTokens = tokens.filter(
     token =>
@@ -66,6 +80,7 @@ const Send1: React.FC<{
   const handleTokenSelection = (token: Token) => {
     setSelectedToken(token);
   };
+  fetchTokensImages(); // Fetch token images when component mounts
 
   if (selectedToken) {
     return (
@@ -82,7 +97,7 @@ const Send1: React.FC<{
         </div>
 
         <img
-          src={`/popup/${selectedToken.symbol.toLowerCase()}.png`}
+          src={getTokenImage(selectedToken.symbol) || 'invalid-url'} // Force error if no image found
           alt={selectedToken.name}
           className="h-16 w-16 my-4"
           onError={handleImageError}
@@ -226,7 +241,7 @@ const Send1: React.FC<{
             onClick={() => handleTokenSelection(token)}>
             <div className="flex items-center space-x-4">
               <img
-                src={`/popup/${token.symbol.toLowerCase()}.png`}
+                src={getTokenImage(token.symbol) || 'invalid-url'}
                 alt={token.name}
                 className="h-9 w-9"
                 onError={handleImageError}

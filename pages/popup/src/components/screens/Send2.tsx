@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-// Define the Props type for the Send2 component
+const jsonUrl =
+  'https://raw.githubusercontent.com/coinchimp/kspr-wallet-extension/main/chrome-extension/public/tokens.json';
+
 type Send2Props = {
   isLight: boolean;
   passcode: string;
@@ -16,26 +18,41 @@ type Send2Props = {
 };
 
 const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-  const maxIndex = 2; // Maximum index you want to support
+  const randomImageNumber = Math.floor(Math.random() * 4) + 1;
 
-  const getRandomIndex = () => {
-    return Math.floor(Math.random() * maxIndex) + 1; // Generate a random index between 1 and maxIndex
-  };
+  // Full fallback image URL from GitHub repository
+  const fallbackImageUrl = `https://raw.githubusercontent.com/coinchimp/kspr-wallet-extension/main/chrome-extension/public/token-logos/ksprwallet${randomImageNumber}.png`;
 
-  const tryNextImage = () => {
-    const randomIndex = getRandomIndex();
-    e.currentTarget.src = `/popup/ksprwallet${randomIndex}.png`;
-    e.currentTarget.onerror = null; // Prevent infinite loop if all images fail
-  };
-
-  e.currentTarget.onerror = tryNextImage; // Set the onError to try the next image
-  tryNextImage(); // Start the process
+  // Set fallback image URL directly if not already set
+  e.currentTarget.src = fallbackImageUrl;
+  e.currentTarget.onerror = null; // Stop further error handling after retry
 };
+
 const estimatedFee = 0.003;
 const priorityFee = 0.001;
 
 const Send2: React.FC<Send2Props> = ({ isLight, passcode, onBack, selectedToken, amount, recipientAddress }) => {
   const currentDate = new Date().toLocaleString(); // Get the current date and time
+  const [tokensData, setTokensData] = useState<any[]>([]); // Store fetched token images
+
+  const getTokenImage = (symbol: string) => {
+    const token = tokensData.find(token => token.symbol.toLowerCase() === symbol.toLowerCase());
+
+    // Ensure the fallback is also the full GitHub URL
+    return token ? token.image : '';
+  };
+
+  const fetchTokensImages = async () => {
+    try {
+      const response = await fetch(jsonUrl);
+      const data = await response.json();
+      setTokensData(data.tokens); // Store tokens data
+    } catch (error) {
+      console.error('Error fetching tokens:', error);
+    }
+  };
+
+  fetchTokensImages(); // Fetch token images when component mounts
 
   return (
     <div className="flex flex-col items-center justify-start w-full h-full p-4 pt-2 overflow-y-auto">
@@ -50,7 +67,7 @@ const Send2: React.FC<Send2Props> = ({ isLight, passcode, onBack, selectedToken,
       </div>
 
       <img
-        src={`/popup/${selectedToken.symbol.toLowerCase()}.png`}
+        src={getTokenImage(selectedToken.symbol) || 'invalid-url'}
         alt={selectedToken.name}
         className="h-16 w-16 my-4"
         onError={handleImageError}
