@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { decryptData } from '../../../../../chrome-extension/utils/Crypto';
 import { encryptedSeedStorage } from '@extension/storage';
 
+const jsonUrl =
+  'https://raw.githubusercontent.com/coinchimp/kspr-wallet-extension/main/chrome-extension/public/tokens.json';
+
 type Action = {
   tokenName: string;
   tokenSymbol: string;
@@ -11,6 +14,17 @@ type Action = {
   transactionId: string;
   date: string;
   status: string;
+};
+
+const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+  const randomImageNumber = Math.floor(Math.random() * 4) + 1;
+
+  // Full fallback image URL from GitHub repository
+  const fallbackImageUrl = `https://raw.githubusercontent.com/coinchimp/kspr-wallet-extension/main/chrome-extension/public/token-logos/ksprwallet${randomImageNumber}.png`;
+
+  // Set fallback image URL directly if not already set
+  e.currentTarget.src = fallbackImageUrl;
+  e.currentTarget.onerror = null; // Stop further error handling after retry
 };
 
 // Custom date comparison functions
@@ -57,12 +71,6 @@ const reduceTransactionId = (txId: string): string => {
     return `${txId.slice(0, 12)}...${txId.slice(-10)}`;
   }
   return txId;
-};
-
-const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-  const randomImageNumber = Math.floor(Math.random() * 2) + 1;
-  e.currentTarget.src = `/popup/ksprwallet${randomImageNumber}.png`; // Use random default image
-  e.currentTarget.onerror = null; // Prevent infinite loop if all images fail
 };
 
 const formatBalance = (balance: number | null | undefined): string => {
@@ -236,6 +244,24 @@ type ActionsProps = {
 const Actions: React.FC<ActionsProps> = ({ isLight, selectedAccount, passcode, onBack }) => {
   const [search, setSearch] = useState<string>('');
   const [filteredActions, setFilteredActions] = useState<Action[]>(exampleActions);
+  const [tokensData, setTokensData] = useState<any[]>([]); // Store fetched token images
+
+  const fetchTokensImages = async () => {
+    try {
+      const response = await fetch(jsonUrl);
+      const data = await response.json();
+      setTokensData(data.tokens); // Store tokens data
+    } catch (error) {
+      console.error('Error fetching tokens:', error);
+    }
+  };
+
+  const getTokenImage = (symbol: string) => {
+    const token = tokensData.find(token => token.symbol.toLowerCase() === symbol.toLowerCase());
+
+    // Return the image if found, otherwise return undefined
+    return token ? token.image : '';
+  };
 
   useEffect(() => {
     const filtered = exampleActions.filter(action => {
@@ -249,6 +275,8 @@ const Actions: React.FC<ActionsProps> = ({ isLight, selectedAccount, passcode, o
   }, [search]);
 
   const groupedActions = groupActionsByDate(filteredActions);
+
+  fetchTokensImages();
 
   return (
     <div className="flex flex-col items-center justify-start w-full h-full p-4 pt-6 overflow-y-auto">
@@ -308,11 +336,12 @@ const Actions: React.FC<ActionsProps> = ({ isLight, selectedAccount, passcode, o
               {/* Token and action details */}
               <div className="flex items-center space-x-4">
                 <img
-                  src={`/popup/${action.tokenSymbol.toLowerCase()}.png`}
+                  src={getTokenImage(action.tokenSymbol.toString()) || 'invalid-url'}
                   alt={action.tokenName}
                   className="h-9 w-9"
                   onError={handleImageError}
                 />
+
                 <div>
                   <h3
                     className={`text-xs text-left font-bold ${
