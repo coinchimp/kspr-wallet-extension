@@ -23,12 +23,9 @@ async function setupUtxoProcessorEventListeners(utxoProcessor: any, accountIndex
         console.log('balance event:', event.data)
         let accountsStore = await accountsStorage.getAccounts();
         if(accountsStore){
-          console.log("OUI ON EST DANS accountsStore");
-          console.log("accountIndex", accountIndex);
           accountsStore[accountIndex].utxoCount = event.data.balance.matureUtxoCount;
           accountsStore[accountIndex].balance = fromSompi(event.data.balance.mature);
         }
-        console.log("accountsStore", accountsStore);
         await accountsStorage.saveAccounts(accountsStore);
         chrome.runtime.sendMessage({ type: 'ACCOUNTS_UPDATED', accounts: accountsStore });
         break;
