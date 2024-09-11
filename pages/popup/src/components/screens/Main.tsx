@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo  } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Balance from '@src/components/utils/Balance';
 import { decryptData } from '../../../../../chrome-extension/utils/Crypto';
 import { encryptedSeedStorage } from '@extension/storage';
@@ -14,6 +14,7 @@ type MainProps = {
   onSend: () => void;
   onReceive: () => void;
   onActions: () => void;
+  onCompound: () => void;
 };
 
 const formatBalance = (balance: number | null | undefined): string => {
@@ -42,7 +43,7 @@ const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
   e.currentTarget.onerror = null; // Stop further error handling after retry
 };
 
-const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onActions }) => {
+const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onActions, onCompound }) => {
   const [tokensData, setTokensData] = useState<any[]>([]); // Store fetched token images
   const [tokensFromApi, setTokensFromApi] = useState<any[]>([]); // Store tokens from Kasplex API
   const [accounts, setAccounts] = useState<any[]>([]); // Store fetched accounts
@@ -51,13 +52,16 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
 
   const utxo_count = useMemo(() => selectedAccount?.utxoCount || 0, [selectedAccount]);
 
-  const kasToken = useMemo(() => ({
-    name: 'Kaspa',
-    symbol: 'KAS',
-    balance: selectedAccount?.balance || 0,
-    exchangeRate: exchangeRate, 
-    change24h: -1.23, 
-  }), [selectedAccount]);
+  const kasToken = useMemo(
+    () => ({
+      name: 'Kaspa',
+      symbol: 'KAS',
+      balance: selectedAccount?.balance || 0,
+      exchangeRate: exchangeRate,
+      change24h: -1.23,
+    }),
+    [selectedAccount],
+  );
 
   const totalUSD = [kasToken, ...tokensFromApi].reduce((sum, token) => sum + token.balance * token.exchangeRate, 0);
   const totalChange24h =
@@ -72,20 +76,19 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
   useEffect(() => {
     const loadAccounts = async () => {
       try {
-        
-        chrome.runtime.sendMessage({ type: 'GET_ACCOUNTS' }, async (response) => {
+        chrome.runtime.sendMessage({ type: 'GET_ACCOUNTS' }, async response => {
           if (response.error) {
             console.error('Error fetching accounts:', response.error);
           } else {
-            if (response.accounts){
+            if (response.accounts) {
               setAccounts(response.accounts);
               setSelectedAccount((prev: any) => prev || response.accounts[0]); // Select the first account if none selected
-            }else{
+            } else {
               const encryptedSeed = await encryptedSeedStorage.getSeed();
               if (!encryptedSeed) throw new Error('No seed found in storage.');
-      
+
               const seed = await decryptData(passcode, encryptedSeed);
-      
+
               // Send message to background script to start scanning, and update state progressively
               chrome.runtime.sendMessage({ type: 'GET_AND_STORE_ACCOUNTS', seed }, response => {
                 if (response.error) {
@@ -95,11 +98,9 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
                   setSelectedAccount((prev: any) => prev || response.accounts[0]); // Select the first account if none selected
                 }
               });
-
-            }    
+            }
           }
         });
-
       } catch (error) {
         console.error('Failed to load accounts:', error);
       }
@@ -123,7 +124,7 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
     const handleMessage = (message: any) => {
       if (message.type === 'ACCOUNTS_UPDATED' && message.accounts) {
         setAccounts(message.accounts);
-  
+
         // Force a re-render even if selectedAccount is the same
         setSelectedAccount((prev: any) => {
           if (prev && prev.address === message.accounts[0].address) {
@@ -134,9 +135,9 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
         });
       }
     };
-  
+
     chrome.runtime.onMessage.addListener(handleMessage);
-  
+
     return () => {
       chrome.runtime.onMessage.removeListener(handleMessage);
     };
@@ -164,19 +165,19 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
   // Fetch Kaspa balance once an account is selected
   useEffect(() => {
     let intervalId;
-  
+
     const fetchTokensPeriodically = async () => {
       if (selectedAccount) {
         await fetchTokensFromKasplex(selectedAccount.address); // Fetch tokens for selected account
       }
     };
-  
+
     // Initial fetch when component mounts
     fetchTokensPeriodically();
-  
+
     // Set interval for periodic fetching
     intervalId = setInterval(fetchTokensPeriodically, 30000); // 30 seconds
-  
+
     // Clean up the interval when the component is unmounted or the account changes
     return () => {
       clearInterval(intervalId);
@@ -257,7 +258,15 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
               } mb-2 hover:scale-105 transition duration-300 ease-in-out cursor-pointer ${
                 isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'
               }`}
-              onClick={action === 'Send' ? onSend : action === 'Receive' ? onReceive : undefined}>
+              onClick={
+                action === 'Send'
+                  ? onSend
+                  : action === 'Receive'
+                    ? onReceive
+                    : action === 'Compound'
+                      ? onCompound
+                      : undefined
+              }>
               <img src={`/popup/icons/${action.toLowerCase()}.svg`} alt={action} className="h-8 w-8" />
             </div>
 
