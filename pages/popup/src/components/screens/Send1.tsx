@@ -74,6 +74,12 @@ const Send1: React.FC<{
       token.symbol.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
+  const priorityFeeValues = {
+    low: 0.1,
+    mid: 0.75,
+    high: 1.5,
+  };
+
   const estimatedTransactionFee = 0.003;
   const [priorityFee, setPriorityFee] = useState<number>(0);
 
@@ -85,7 +91,7 @@ const Send1: React.FC<{
   if (selectedToken) {
     return (
       <div className="flex flex-col items-center justify-start w-full h-full p-2 pt-2 overflow-y-auto">
-        <div className="w-full flex items-center mb-2">
+        <div className="w-full flex items-center mb-1">
           <button
             className={`text-2xl p-4 w-12 h-12 mr-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out rounded-full font-bold text-[#70C7BA] flex items-center justify-center`}
             onClick={onBack}>
@@ -188,7 +194,7 @@ const Send1: React.FC<{
         <div className="w-full mb-2 text-left text-xs text-gray-600">
           Estimated Transaction Fee: {estimatedTransactionFee.toFixed(3)} KAS
         </div>
-        <div className="relative w-full mb-4">
+        <div className="relative w-full mb-1">
           <input
             type="number"
             placeholder="Priority Fee (optional)" // Always shows the placeholder when the input is empty
@@ -199,7 +205,29 @@ const Send1: React.FC<{
             onChange={e => setPriorityFee(parseFloat(e.target.value) || 0)}
           />
         </div>
-
+        <div className="w-full flex justify-around mb-3">
+          <button
+            className={`w-1/4 p-1 rounded font-bold transition duration-300 ease-in-out ${
+              isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'
+            } hover:scale-105`}
+            onClick={() => setPriorityFee(priorityFeeValues.low)}>
+            Low
+          </button>
+          <button
+            className={`w-1/4 p-1 rounded font-bold transition duration-300 ease-in-out ${
+              isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'
+            } hover:scale-105`}
+            onClick={() => setPriorityFee(priorityFeeValues.mid)}>
+            Mid
+          </button>
+          <button
+            className={`w-1/4 p-1 rounded font-bold transition duration-300 ease-in-out ${
+              isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'
+            } hover:scale-105`}
+            onClick={() => setPriorityFee(priorityFeeValues.high)}>
+            High
+          </button>
+        </div>
         {/* Ensure the 'Next' button is visible */}
         <div className="w-full mt-2 flex justify-center">
           <button

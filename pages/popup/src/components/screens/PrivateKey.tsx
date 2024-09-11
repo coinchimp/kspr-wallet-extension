@@ -100,7 +100,7 @@ const PrivateKey: React.FC<PrivateKeyProps> = ({ isLight, selectedAccount, passc
         <p className={`text-sm font-bold mb-2 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
           Your private key is the only way to recover your account.
         </p>
-        <p className={`text-sm font-bold mb-6 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
+        <p className={`text-sm font-bold mb-2 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
           Do not let anyone see your private key.
         </p>
       </div>
@@ -122,7 +122,7 @@ const PrivateKey: React.FC<PrivateKeyProps> = ({ isLight, selectedAccount, passc
       )}
       {/* Checkbox */}
       {!showKey && (
-        <div className="w-full flex items-start mb-4">
+        <div className="w-full flex items-start mb-2">
           <input
             type="checkbox"
             checked={isCheckboxChecked}

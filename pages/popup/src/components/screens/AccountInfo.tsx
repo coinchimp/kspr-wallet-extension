@@ -12,7 +12,6 @@ type AccountInfoProps = {
   onBack: () => void;
   onRemove: () => void;
   onShowKey: () => void;
-  onShowSecret: () => void;
 };
 
 const AccountInfo: React.FC<AccountInfoProps> = ({
@@ -22,7 +21,6 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
   onBack,
   onRemove,
   onShowKey,
-  onShowSecret,
 }) => {
   const [accountName, setAccountName] = useState(selectedAccount.name);
   const accountAddressTemp = 'kaspatest:qz7d28dacezxdz066pzpkrrf2p45h2rr28evyedwmzlzer6kgvpvc36tjzvcj';
@@ -109,15 +107,6 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
           style={{ wordBreak: 'break-all' }}>
           {accountAddressTemp}
         </p>
-      </div>
-
-      {/* Show Secret Phrase */}
-      <div className="w-full mb-2">
-        <button
-          className={`w-full text-base p-3 rounded-lg font-bold transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'}`}
-          onClick={onShowSecret}>
-          Secret Phrase
-        </button>
       </div>
 
       {/* Show Private Key */}

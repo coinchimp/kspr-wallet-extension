@@ -25,6 +25,7 @@ import NewContact from '@src/components/screens/NewContact';
 import ContactInfo from '@src/components/screens/ContactInfo';
 import About from '@src/components/screens/About';
 import ImportKey from '@src/components/screens/ImportKey';
+import Compound from '@src/components/screens/Compound';
 
 import { encryptedSeedStorage } from '@extension/storage';
 
@@ -52,6 +53,7 @@ enum Screen {
   ContactInfo,
   About,
   ImportKey,
+  Compound,
 }
 
 const accounts = [
@@ -147,6 +149,7 @@ const Popup = () => {
             onSend={() => setCurrentScreen(Screen.Send1)}
             onReceive={() => setCurrentScreen(Screen.Receive)}
             onActions={() => setCurrentScreen(Screen.Actions)}
+            onCompound={() => setCurrentScreen(Screen.Compound)}
           />
         );
       case Screen.Receive:
@@ -191,6 +194,7 @@ const Popup = () => {
             onAccountInfo={() => setCurrentScreen(Screen.AccountInfo)}
             onNewAccount={() => setCurrentScreen(Screen.NewAccount)}
             onImportKey={() => setCurrentScreen(Screen.ImportKey)}
+            onShowSecret={() => setCurrentScreen(Screen.SecretExport)}
           />
         );
       case Screen.AccountInfo:
@@ -202,7 +206,6 @@ const Popup = () => {
             onBack={() => setCurrentScreen(Screen.Accounts)}
             onRemove={() => setCurrentScreen(Screen.AccountInfo)}
             onShowKey={() => setCurrentScreen(Screen.PrivateKey)}
-            onShowSecret={() => setCurrentScreen(Screen.SecretExport)}
           />
         );
       case Screen.NewAccount:
@@ -233,7 +236,7 @@ const Popup = () => {
             isLight={isLight}
             selectedAccount={selectedAccount}
             passcode={passcode}
-            onBack={() => setCurrentScreen(Screen.AccountInfo)}
+            onBack={() => setCurrentScreen(Screen.Accounts)}
           />
         );
       case Screen.Network:
@@ -280,6 +283,8 @@ const Popup = () => {
             recipientAddress={recipientAddress}
           />
         );
+      case Screen.Compound:
+        return <Compound isLight={isLight} passcode={passcode} onBack={() => setCurrentScreen(Screen.Main)} />;
       default:
         return null;
     }
@@ -310,7 +315,7 @@ const Popup = () => {
 
   const LockButton = () => {
     const handleLock = () => {
-      chrome.runtime.sendMessage({ type: 'LOCK' }, (response) => {
+      chrome.runtime.sendMessage({ type: 'LOCK' }, response => {
         if (response.lock) {
           console.log('Wallet is locked');
           setCurrentScreen(Screen.Unlock);

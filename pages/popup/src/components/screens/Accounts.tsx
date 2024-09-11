@@ -14,6 +14,7 @@ type AccountsProps = {
   onAccountInfo: () => void;
   onNewAccount: () => void;
   onImportKey: () => void;
+  onShowSecret: () => void;
 };
 
 const reduceKaspaAddress = (address: string): string => {
@@ -36,6 +37,7 @@ const Accounts: React.FC<AccountsProps> = ({
   onAccountInfo,
   onNewAccount,
   onImportKey,
+  onShowSecret,
 }) => {
   const [accounts, setAccounts] = useState([
     { name: 'Account 1', address: 'kaspatest:qr63dcf5mfexwg9kcx77gr6pgcy099m3963geaa4ed7pva2u9vcsk8583qkcl' },
@@ -90,6 +92,38 @@ const Accounts: React.FC<AccountsProps> = ({
         </button>
         <h1 className={`text-2xl font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>Accounts</h1>
       </div>
+      {/* Add New Account Button */}
+      <div className="w-full mt-6">
+        <button
+          className={`w-full text-base mb-2 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
+            isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
+          } hover:scale-105`}
+          onClick={onNewAccount}>
+          Add
+        </button>
+      </div>
+
+      {/* Add New Account Button */}
+      <div className="w-full mt-2">
+        <button
+          className={`w-full text-base mb-2 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
+            isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
+          } hover:scale-105`}
+          onClick={onImportKey}>
+          Import Private Key
+        </button>
+      </div>
+
+      {/* Show Secret Phrase */}
+      <div className="w-full mt-2">
+        <button
+          className={`w-full text-base mb-6 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
+            isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
+          } hover:scale-105`}
+          onClick={onShowSecret}>
+          Secret Phrase
+        </button>
+      </div>
 
       {/* List of Accounts */}
       <div className="w-full space-y-4">
@@ -105,36 +139,16 @@ const Accounts: React.FC<AccountsProps> = ({
                 <span className="text-white text-xl font-bold">{account.name.charAt(0).toUpperCase()}</span>
               </div>
               <div>
-                <h3 className={`text-sm font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>{account.name}</h3>
-                <p className={`text-xs ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
+                <h3 className={`text-sm text-left font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
+                  {account.name}
+                </h3>
+                <p className={`text-xs text-left ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
                   {reduceKaspaAddress(account.address)}
                 </p>
               </div>
             </div>
           </div>
         ))}
-      </div>
-
-      {/* Add New Account Button */}
-      <div className="w-full mt-6">
-        <button
-          className={`w-full text-base mb-2 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
-            isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
-          } hover:scale-105`}
-          onClick={onNewAccount}>
-          Add
-        </button>
-      </div>
-
-      {/* Add New Account Button */}
-      <div className="w-full mt-2">
-        <button
-          className={`w-full text-base mb-6 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
-            isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
-          } hover:scale-105`}
-          onClick={onImportKey}>
-          Import Private Key
-        </button>
       </div>
     </div>
   );
