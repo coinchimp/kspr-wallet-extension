@@ -41,7 +41,6 @@ const Secret2: React.FC<{ isLight: boolean; onFinish: (passcode: string) => void
       await encryptedSeedStorage.set(() => encryptedSeed); // Store the encrypted seed in the storage
       setShowPasscodeScreen(false);
       onFinish(passcode); // Pass the passcode to the parent
-      toast.success('Wallet created successfully');
     } catch (error) {
       console.error('Error encrypting seed phrase:', error);
       toast.error('Failed to securely store the seed phrase.');

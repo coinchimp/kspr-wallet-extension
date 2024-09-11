@@ -2,7 +2,7 @@ import { createStorage } from './base';
 import { StorageEnum } from './enums';
 
 const storeAccounts = createStorage<any>('accounts-storage-key', null, {
-  storageEnum: StorageEnum.Local,
+  storageEnum: StorageEnum.Session,
   liveUpdate: true,
 });
 

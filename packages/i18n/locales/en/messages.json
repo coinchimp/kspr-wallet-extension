@@ -1,7 +1,7 @@
 {
   "extensionDescription": {
     "description": "KSPR Wallet for Kaspa KRC20 Tokens",
-    "message": "KSPR Wallet is a browser enxtension for Kaspa (KAS) and KRC20 tokens."
+    "message": "KSPR Wallet is a browser extension for Kaspa (KAS) and KRC20 tokens."
   },
   "extensionName": {
     "description": "KSPR Wallet",
