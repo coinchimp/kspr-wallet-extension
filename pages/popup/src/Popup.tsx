@@ -309,11 +309,23 @@ const Popup = () => {
   };
 
   const LockButton = () => {
+    const handleLock = () => {
+      chrome.runtime.sendMessage({ type: 'LOCK' }, (response) => {
+        if (response.lock) {
+          console.log('Wallet is locked');
+          setCurrentScreen(Screen.Unlock);
+        } else if (response.error) {
+          console.error('Failed to lock:', response.error);
+        }
+      });
+    };
+
     if (currentScreen !== null && [Screen.Main, Screen.Send1, Screen.Send2, Screen.Receive].includes(currentScreen)) {
       return (
         <button
           className={`absolute right-4 p-2 rounded-full  ${isLight ? 'bg-gray-100' : 'bg-gray-800'} hover:scale-105 transition duration-300 ease-in-out ${isLight ? 'hover:bg-gray-200 hover:text-gray-900' : 'hover:bg-gray-700 hover:text-gray-100'}`}
-          style={{ marginRight: '8px' }}>
+          style={{ marginRight: '8px' }}
+          onClick={handleLock}>
           <img src="/popup/icons/lock.svg" alt="Lock" className="h-5 w-5" />
         </button>
       );
