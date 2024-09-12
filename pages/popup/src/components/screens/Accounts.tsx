@@ -85,10 +85,9 @@ const Accounts: React.FC<AccountsProps> = ({
     <div className="flex flex-col items-center justify-start w-full h-full p-4 pt-6 overflow-y-auto">
       <div className="w-full flex items-center mb-4">
         <button
-          className={`text-2xl p-4 w-12 h-12 mr-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out rounded-full font-bold text-[#70C7BA] flex items-center justify-center`}
-          onClick={onBack} // Use onBack to navigate back to Settings page
-        >
-          ←
+          className={`text-2xl p-3 w-12 h-12 mr-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out rounded-full font-bold flex items-center justify-center`}
+          onClick={onBack}>
+          <img src="/popup/icons/back-arrow-2.svg" alt="Back" className="h-10 w-10" />
         </button>
         <h1 className={`text-2xl font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>Accounts</h1>
       </div>
