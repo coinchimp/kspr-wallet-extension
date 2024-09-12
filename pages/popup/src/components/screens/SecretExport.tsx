@@ -75,10 +75,10 @@ const SecretExport: React.FC<SecretExportProps> = ({ isLight, selectedAccount, p
       </div>
 
       {/* Warning Messages */}
-      <div className="w-full mb-6 flex flex-col items-center">
+      <div className="w-full mb-2 flex flex-col items-center">
         <svg
-          height="48px"
-          width="48px"
+          height="30px"
+          width="30px"
           viewBox="0 0 192.146 192.146"
           fill="currentColor"
           className={`mb-4 ${isLight ? 'text-red-600' : 'text-red-400'}`}
@@ -99,7 +99,7 @@ const SecretExport: React.FC<SecretExportProps> = ({ isLight, selectedAccount, p
           </g>
         </svg>
 
-        <p className={`text-sm font-bold mb-2 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
+        <p className={`text-sm font-bold mb-1 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
           Your secret phrase is the only way to recover your wallet.
         </p>
         <p className={`text-sm font-bold mb-2 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
@@ -109,7 +109,7 @@ const SecretExport: React.FC<SecretExportProps> = ({ isLight, selectedAccount, p
 
       {/* Enter Passcode */}
       {!showSecret && (
-        <div className="w-full mb-6">
+        <div className="w-full mb-2">
           <label className={`block mb-2 text-sm font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
             Enter your passcode
           </label>
@@ -140,7 +140,7 @@ const SecretExport: React.FC<SecretExportProps> = ({ isLight, selectedAccount, p
       )}
       {/* Show me the Secret Phrase Button */}
       {!showSecret && (
-        <div className="w-full mt-4">
+        <div className="w-full mt-2">
           <button
             className={`w-full text-base mb-6 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
               isLight ? 'bg-red-700 text-white shadow-black' : 'bg-red-500 text-white'

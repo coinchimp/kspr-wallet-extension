@@ -139,11 +139,11 @@ const Security: React.FC<SecurityProps> = ({ isLight, selectedAccount, passcode,
         );
       case 'hardReset':
         return (
-          <div className="w-full mb-6 flex flex-col items-center">
+          <div className="w-full mb-2 flex flex-col items-center">
             <h3 className={`text-2xl font-bold mb-6 ${isLight ? 'text-red-600' : 'text-red-400'}`}>Hard Reset</h3>
             <svg
-              height="48px"
-              width="48px"
+              height="30px"
+              width="30px"
               viewBox="0 0 192.146 192.146"
               fill="currentColor"
               className={`mb-4 ${isLight ? 'text-red-600' : 'text-red-400'}`}
@@ -163,12 +163,12 @@ const Security: React.FC<SecurityProps> = ({ isLight, selectedAccount, passcode,
                 </g>
               </g>
             </svg>
-            <p className={`text-xs mb-4 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
+            <p className={`text-xs mb-2 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
               This will remove all data from this wallet, including all accounts. Make sure you have copied your secret
               phrase and private keys for all accounts. Otherwise, you will lose access to your funds. After the
               process, you can import an existing secret phrase or create a new one.
             </p>
-            <div className="flex items-start mb-6">
+            <div className="flex items-start mb-2">
               <input
                 type="checkbox"
                 checked={isCheckboxChecked}
@@ -180,7 +180,7 @@ const Security: React.FC<SecurityProps> = ({ isLight, selectedAccount, passcode,
                 I understand all the risks associated with this action.
               </label>
             </div>
-            <div className="w-full mt-6"></div>
+            <div className="w-full mt-2"></div>
             <button
               className={`w-full text-base p-4 rounded-lg ${isCheckboxChecked ? 'bg-red-500' : 'bg-gray-400 cursor-not-allowed'} text-white font-bold hover:bg-red-600 transition duration-300 ease-in-out`}
               disabled={!isCheckboxChecked}>

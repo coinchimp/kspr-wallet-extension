@@ -74,10 +74,10 @@ const PrivateKey: React.FC<PrivateKeyProps> = ({ isLight, selectedAccount, passc
       </div>
 
       {/* Warning Messages */}
-      <div className="w-full mb-6 flex flex-col items-center">
+      <div className="w-full mb-2 flex flex-col items-center">
         <svg
-          height="48px"
-          width="48px"
+          height="30px"
+          width="30px"
           viewBox="0 0 192.146 192.146"
           fill="currentColor"
           className={`mb-4 ${isLight ? 'text-red-600' : 'text-red-400'}`}
@@ -97,7 +97,7 @@ const PrivateKey: React.FC<PrivateKeyProps> = ({ isLight, selectedAccount, passc
             </g>
           </g>
         </svg>
-        <p className={`text-sm font-bold mb-2 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
+        <p className={`text-sm font-bold mb-1 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
           Your private key is the only way to recover your account.
         </p>
         <p className={`text-sm font-bold mb-2 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
@@ -107,7 +107,7 @@ const PrivateKey: React.FC<PrivateKeyProps> = ({ isLight, selectedAccount, passc
 
       {/* Enter Passcode */}
       {!showKey && (
-        <div className="w-full mb-6">
+        <div className="w-full mb-2">
           <label className={`block mb-2 text-sm font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
             Enter your passcode
           </label>

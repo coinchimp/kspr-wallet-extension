@@ -89,11 +89,11 @@ const Settings: React.FC<SettingsProps> = ({
         {settingsItems.map((item, index) => (
           <div
             key={index}
-            className={`flex justify-between items-center p-3 rounded-lg cursor-pointer transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'} `}
+            className={`flex justify-between items-center p-2 rounded-lg cursor-pointer transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'} `}
             onClick={item.action} // Navigate to the respective page
           >
             <div className="flex items-center space-x-4">
-              <img src={item.icon} alt={item.label} className="h-9 w-9" />
+              <img src={item.icon} alt={item.label} className="h-7 w-7" />
               <div>
                 <h3 className={`text-base font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>{item.label}</h3>
               </div>

@@ -90,7 +90,7 @@ const Send1: React.FC<{
 
   if (selectedToken) {
     return (
-      <div className="flex flex-col items-center justify-start w-full h-full p-2 pt-2 overflow-y-auto">
+      <div className="flex flex-col items-center justify-start w-full h-full p-1 pt-1 overflow-y-auto">
         <div className="w-full flex items-center mb-1">
           <button
             className={`text-2xl p-4 w-12 h-12 mr-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out rounded-full font-bold text-[#70C7BA] flex items-center justify-center`}
@@ -105,7 +105,7 @@ const Send1: React.FC<{
         <img
           src={getTokenImage(selectedToken.symbol) || 'invalid-url'} // Force error if no image found
           alt={selectedToken.name}
-          className="h-16 w-16 my-4"
+          className="h-12 w-12 my-4"
           onError={handleImageError}
         />
 
