@@ -4,8 +4,7 @@ import { decryptData } from '../../../../../chrome-extension/utils/Crypto';
 import { encryptedSeedStorage } from '@extension/storage';
 
 const exchangeRate = 0.168; // $KAS to USD exchange rate
-const jsonUrl =
-  'https://raw.githubusercontent.com/coinchimp/kspr-wallet-extension/main/chrome-extension/public/tokens.json';
+const jsonUrl = '/popup/tokens.json';
 const kasplexApiUrl = 'https://tn10api.kasplex.org/v1/krc20/address'; // Base URL for Kasplex API
 
 type MainProps = {
@@ -36,7 +35,7 @@ const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
   const randomImageNumber = Math.floor(Math.random() * 4) + 1;
 
   // Full fallback image URL from GitHub repository
-  const fallbackImageUrl = `https://raw.githubusercontent.com/coinchimp/kspr-wallet-extension/main/chrome-extension/public/token-logos/ksprwallet${randomImageNumber}.png`;
+  const fallbackImageUrl = `/popup/token-logos/ksprwallet${randomImageNumber}.png`;
 
   // Set fallback image URL directly if not already set
   e.currentTarget.src = fallbackImageUrl;
@@ -297,7 +296,7 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
               <img
                 src={getTokenImage(token.symbol) || 'invalid-url'}
                 alt={token.name}
-                className="h-9 w-9 rounded-full"
+                className="h-9 w-9 rounded-full object-cover"
                 onError={handleImageError}
               />
 

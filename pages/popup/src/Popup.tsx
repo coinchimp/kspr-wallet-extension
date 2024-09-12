@@ -372,16 +372,16 @@ const Popup = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: 'calc(100% - 72px)', // Ensure the section doesn't overlap with the top legend
+            height: '100%', // Ensure the section doesn't overlap with the top legend
             width: '100%',
             paddingTop: '15px',
             overflowY: 'auto', // Make the section scrollable within its area
-            marginTop: '25px', // Push the section below the fixed legend
+            marginTop: '24px', // Push the section below the fixed legend
           }}>
           {renderScreen()}
         </section>
 
-        <div className="flex justify-between items-center p-2">
+        <div className="flex justify-between items-center pb-[5px] p-2">
           {/* Toggle Button in the Center */}
           <ToggleButton />
 

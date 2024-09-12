@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
-const jsonUrl =
-  'https://raw.githubusercontent.com/coinchimp/kspr-wallet-extension/main/chrome-extension/public/tokens.json';
+const jsonUrl = '/popup/tokens.json';
 
 type Token = {
   name: string;
@@ -21,7 +20,7 @@ const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
   const randomImageNumber = Math.floor(Math.random() * 4) + 1;
 
   // Full fallback image URL from GitHub repository
-  const fallbackImageUrl = `https://raw.githubusercontent.com/coinchimp/kspr-wallet-extension/main/chrome-extension/public/token-logos/ksprwallet${randomImageNumber}.png`;
+  const fallbackImageUrl = `/popup/token-logos/ksprwallet${randomImageNumber}.png`;
 
   // Set fallback image URL directly if not already set
   e.currentTarget.src = fallbackImageUrl;
@@ -90,12 +89,12 @@ const Send1: React.FC<{
 
   if (selectedToken) {
     return (
-      <div className="flex flex-col items-center justify-start w-full h-full p-2 pt-2 overflow-y-auto">
+      <div className="flex flex-col items-center justify-start w-full h-full p-1 pt-1 overflow-y-auto">
         <div className="w-full flex items-center mb-1">
           <button
-            className={`text-2xl p-4 w-12 h-12 mr-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out rounded-full font-bold text-[#70C7BA] flex items-center justify-center`}
+            className={`text-2xl p-3 w-12 h-12 mr-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out rounded-full font-bold flex items-center justify-center`}
             onClick={onBack}>
-            ←
+            <img src="/popup/icons/back-arrow-2.svg" alt="Back" className="h-10 w-10" />
           </button>
           <h1 className={`text-2xl font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
             Send {selectedToken.name}
@@ -105,7 +104,7 @@ const Send1: React.FC<{
         <img
           src={getTokenImage(selectedToken.symbol) || 'invalid-url'} // Force error if no image found
           alt={selectedToken.name}
-          className="h-16 w-16 my-4"
+          className="h-12 w-12 my-4 rounded-full object-cover"
           onError={handleImageError}
         />
 
@@ -249,9 +248,9 @@ const Send1: React.FC<{
   return (
     <div className="flex flex-col items-center justify-start w-full h-full p-4 pt-6 overflow-y-auto">
       <button
-        className={`text-2xl p-4 w-12 h-12 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out rounded-full font-bold text-[#70C7BA] flex items-center justify-center`}
+        className={`text-2xl p-3 w-12 h-12 mr-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out rounded-full font-bold flex items-center justify-center`}
         onClick={onBack}>
-        ←
+        <img src="/popup/icons/back-arrow-2.svg" alt="Back" className="h-10 w-10" />
       </button>
       <input
         type="text"
@@ -271,7 +270,7 @@ const Send1: React.FC<{
               <img
                 src={getTokenImage(token.symbol) || 'invalid-url'}
                 alt={token.name}
-                className="h-9 w-9"
+                className="h-9 w-9 rounded-full object-cover"
                 onError={handleImageError}
               />
               <div>

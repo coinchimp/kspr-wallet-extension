@@ -7,11 +7,14 @@ html, body {
   padding: 0;
   height: 100%;
   overflow: hidden; /* Prevent body from scrolling */
+  overscroll-behavior: none; /* Prevent bouncing effect on mobile */
+  touch-action: none; /* Prevent default touch scrolling behavior */  
 }
+
 
 body {
   width: 350px;
-  height: 625px;
+  height: 600px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
     'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -46,8 +49,4 @@ html {
   max-height: 100%;
 }
 
-/* Prevent scroll bounce (mobile Safari) */
-html, body {
-  overscroll-behavior: none; /* Prevent bouncing effect on mobile */
-  touch-action: none; /* Prevent default touch scrolling behavior */
-}
+

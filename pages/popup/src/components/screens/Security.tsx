@@ -139,11 +139,11 @@ const Security: React.FC<SecurityProps> = ({ isLight, selectedAccount, passcode,
         );
       case 'hardReset':
         return (
-          <div className="w-full mb-6 flex flex-col items-center">
+          <div className="w-full mb-2 flex flex-col items-center">
             <h3 className={`text-2xl font-bold mb-6 ${isLight ? 'text-red-600' : 'text-red-400'}`}>Hard Reset</h3>
             <svg
-              height="48px"
-              width="48px"
+              height="30px"
+              width="30px"
               viewBox="0 0 192.146 192.146"
               fill="currentColor"
               className={`mb-4 ${isLight ? 'text-red-600' : 'text-red-400'}`}
@@ -163,12 +163,12 @@ const Security: React.FC<SecurityProps> = ({ isLight, selectedAccount, passcode,
                 </g>
               </g>
             </svg>
-            <p className={`text-xs mb-4 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
+            <p className={`text-xs mb-2 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
               This will remove all data from this wallet, including all accounts. Make sure you have copied your secret
               phrase and private keys for all accounts. Otherwise, you will lose access to your funds. After the
               process, you can import an existing secret phrase or create a new one.
             </p>
-            <div className="flex items-start mb-6">
+            <div className="flex items-start mb-2">
               <input
                 type="checkbox"
                 checked={isCheckboxChecked}
@@ -180,7 +180,7 @@ const Security: React.FC<SecurityProps> = ({ isLight, selectedAccount, passcode,
                 I understand all the risks associated with this action.
               </label>
             </div>
-            <div className="w-full mt-6"></div>
+            <div className="w-full mt-2"></div>
             <button
               className={`w-full text-base p-4 rounded-lg ${isCheckboxChecked ? 'bg-red-500' : 'bg-gray-400 cursor-not-allowed'} text-white font-bold hover:bg-red-600 transition duration-300 ease-in-out`}
               disabled={!isCheckboxChecked}>
@@ -215,9 +215,9 @@ const Security: React.FC<SecurityProps> = ({ isLight, selectedAccount, passcode,
     <div className="flex flex-col items-center justify-start w-full h-full p-4 pt-6 overflow-y-auto">
       <div className="w-full flex items-center mb-4">
         <button
-          className={`text-2xl p-4 w-12 h-12 mr-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out rounded-full font-bold text-[#70C7BA] flex items-center justify-center`}
+          className={`text-2xl p-3 w-12 h-12 mr-4 ${isLight ? 'bg-gray-100' : 'bg-gray-800'} mb-2 hover:scale-105 transition duration-300 ease-in-out rounded-full font-bold flex items-center justify-center`}
           onClick={onBack}>
-          ←
+          <img src="/popup/icons/back-arrow-2.svg" alt="Back" className="h-10 w-10" />
         </button>
         <h1 className={`text-2xl font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>Security Settings</h1>
       </div>
