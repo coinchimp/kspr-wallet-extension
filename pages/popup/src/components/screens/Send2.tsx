@@ -68,7 +68,7 @@ const Send2: React.FC<Send2Props> = ({ isLight, passcode, onBack, selectedToken,
       <img
         src={getTokenImage(selectedToken.symbol) || 'invalid-url'}
         alt={selectedToken.name}
-        className="h-16 w-16 my-4"
+        className="h-16 w-16 my-4 rounded-full object-cover"
         onError={handleImageError}
       />
 

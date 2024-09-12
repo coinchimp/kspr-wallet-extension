@@ -296,7 +296,7 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
               <img
                 src={getTokenImage(token.symbol) || 'invalid-url'}
                 alt={token.name}
-                className="h-9 w-9 rounded-full"
+                className="h-9 w-9 rounded-full object-cover"
                 onError={handleImageError}
               />
 

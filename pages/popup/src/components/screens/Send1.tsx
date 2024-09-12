@@ -104,7 +104,7 @@ const Send1: React.FC<{
         <img
           src={getTokenImage(selectedToken.symbol) || 'invalid-url'} // Force error if no image found
           alt={selectedToken.name}
-          className="h-12 w-12 my-4"
+          className="h-12 w-12 my-4 rounded-full object-cover"
           onError={handleImageError}
         />
 
@@ -270,7 +270,7 @@ const Send1: React.FC<{
               <img
                 src={getTokenImage(token.symbol) || 'invalid-url'}
                 alt={token.name}
-                className="h-9 w-9"
+                className="h-9 w-9 rounded-full object-cover"
                 onError={handleImageError}
               />
               <div>

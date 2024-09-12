@@ -337,7 +337,7 @@ const Actions: React.FC<ActionsProps> = ({ isLight, selectedAccount, passcode, o
                 <img
                   src={getTokenImage(action.tokenSymbol.toString()) || 'invalid-url'}
                   alt={action.tokenName}
-                  className="h-9 w-9"
+                  className="h-9 w-9 rounded-full object-cover"
                   onError={handleImageError}
                 />
 

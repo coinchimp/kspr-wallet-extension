@@ -63,7 +63,7 @@ const Compound: React.FC<CompoundProps> = ({ isLight, passcode, onBack }) => {
       <img
         src={getTokenImage('kas') || 'invalid-url'}
         alt={'Kaspa'}
-        className="h-16 w-16 my-4"
+        className="h-16 w-16 my-4 rounded-full object-cover"
         onError={handleImageError}
       />
 
