@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
-const jsonUrl =
-  'https://raw.githubusercontent.com/coinchimp/kspr-wallet-extension/main/chrome-extension/public/tokens.json';
+const jsonUrl = '/popup/tokens.json';
 
 type Send2Props = {
   isLight: boolean;
@@ -21,7 +20,7 @@ const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
   const randomImageNumber = Math.floor(Math.random() * 4) + 1;
 
   // Full fallback image URL from GitHub repository
-  const fallbackImageUrl = `https://raw.githubusercontent.com/coinchimp/kspr-wallet-extension/main/chrome-extension/public/token-logos/ksprwallet${randomImageNumber}.png`;
+  const fallbackImageUrl = `/popup/token-logos/ksprwallet${randomImageNumber}.png`;
 
   // Set fallback image URL directly if not already set
   e.currentTarget.src = fallbackImageUrl;
