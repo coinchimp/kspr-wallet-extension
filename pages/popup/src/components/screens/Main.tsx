@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import Balance from '@src/components/utils/Balance';
 import { decryptData } from '../../../../../chrome-extension/utils/Crypto';
 import { encryptedSeedStorage } from '@extension/storage';
 
-const exchangeRate = 0.168; // $KAS to USD exchange rate
 const jsonUrl = '/popup/tokens.json';
-const kasplexApiUrl = 'https://tn10api.kasplex.org/v1/krc20/address'; // Base URL for Kasplex API
+const kasplexApiUrl = 'https://tn10api.kasplex.org/v1/krc20/address';
+const marketplaceApiUrl = 'https://storage.googleapis.com/testnet-kspr-api-v1/marketplace/marketplace.json';
 
 type MainProps = {
   isLight: boolean;
@@ -43,33 +42,85 @@ const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
 };
 
 const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onActions, onCompound }) => {
-  const [tokensData, setTokensData] = useState<any[]>([]); // Store fetched token images
-  const [tokensFromApi, setTokensFromApi] = useState<any[]>([]); // Store tokens from Kasplex API
-  const [accounts, setAccounts] = useState<any[]>([]); // Store fetched accounts
+  const [tokensData, setTokensData] = useState<any[]>([]);
+  const [tokensFromApi, setTokensFromApi] = useState<any[]>([]);
+  const [accounts, setAccounts] = useState<any[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<any | null>(null);
+  const [marketData, setMarketData] = useState<any | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const utxo_count = useMemo(() => selectedAccount?.utxoCount || 0, [selectedAccount]);
 
-  const kasToken = useMemo(
-    () => ({
+  const kasToken = useMemo(() => {
+    const kasData = marketData?.KAS || { floor_price: 0, change_24h: 0 };
+    return {
       name: 'Kaspa',
       symbol: 'KAS',
       balance: selectedAccount?.balance || 0,
-      exchangeRate: exchangeRate,
-      change24h: -1.23,
-    }),
-    [selectedAccount],
-  );
+      exchangeRate: kasData.floor_price,
+      change24h: kasData.change_24h,
+    };
+  }, [selectedAccount, marketData]);
 
-  const totalUSD = [kasToken, ...tokensFromApi].reduce((sum, token) => sum + token.balance * token.exchangeRate, 0);
-  const totalChange24h =
-    totalUSD !== 0
+  const totalUSD = useMemo(() => {
+    return [kasToken, ...tokensFromApi].reduce(
+      (sum, token) => sum + token.balance * token.exchangeRate,
+      0
+    );
+  }, [selectedAccount, kasToken, tokensFromApi, marketData]);
+
+  const totalChange24h = useMemo(() => {
+    return totalUSD !== 0
       ? [kasToken, ...tokensFromApi].reduce(
           (sum, token) => sum + token.change24h * token.balance * token.exchangeRate,
-          0,
+          0
         ) / totalUSD
       : 0;
+  }, [selectedAccount, totalUSD, kasToken, tokensFromApi, marketData]);
+
+  const fetchMarketData = async () => {
+    try {
+      const urlWithCacheBuster = `${marketplaceApiUrl}?t=${new Date().getTime()}`;
+      const response = await fetch(urlWithCacheBuster);
+      const data = await response.json();
+      setMarketData(data);
+    } catch (error) {
+      console.error('Error fetching market data:', error);
+    }
+  };
+
+  const fetchTokensImages = async () => {
+    try {
+      const response = await fetch(jsonUrl);
+      const data = await response.json();
+      setTokensData(data.tokens);
+    } catch (error) {
+      console.error('Error fetching tokens:', error);
+    }
+  };
+
+  const fetchTokensFromKasplex = async (address: string) => {
+    try {
+      const response = await fetch(`${kasplexApiUrl}/${address}/tokenlist`);
+      const data = await response.json();
+      const tokens = data.result.map((token: any) => {
+        const marketToken = marketData ? marketData[token.tick] : null;
+        const exchangeRate = marketToken ? marketToken.floor_price * kasToken.exchangeRate : 0;
+        const change24h = marketToken ? marketToken.change_24h + kasToken.change24h : 0;
+        return {
+          name: token.tick,
+          symbol: token.tick,
+          balance: Number(token.balance) / 10 ** Number(token.dec),
+          exchangeRate,
+          change24h,
+        };
+      });
+      setTokensFromApi(tokens);
+    } catch (error) {
+      console.error('Error fetching tokens from Kasplex API:', error);
+      setTokensFromApi([]);
+    }
+  };
 
   // Fetch and display accounts progressively from the background script
   useEffect(() => {
@@ -105,18 +156,9 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
       }
     };
 
-    const fetchTokensImages = async () => {
-      try {
-        const response = await fetch(jsonUrl);
-        const data = await response.json();
-        setTokensData(data.tokens); // Store tokens data
-      } catch (error) {
-        console.error('Error fetching tokens:', error);
-      }
-    };
-
     loadAccounts();
-    fetchTokensImages(); // Fetch token images when component mounts
+    fetchTokensImages();
+    fetchMarketData();
   }, [passcode]);
 
   useEffect(() => {
@@ -142,26 +184,6 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
     };
   }, []);
 
-  // Fetch tokens from Kasplex API
-  const fetchTokensFromKasplex = async (address: string) => {
-    try {
-      const response = await fetch(`${kasplexApiUrl}/${address}/tokenlist`);
-      const data = await response.json();
-      const tokensFromApi = data.result.map((token: any) => ({
-        name: token.tick,
-        symbol: token.tick,
-        balance: Number(token.balance) / 10 ** Number(token.dec), // Convert balance using decimals
-        exchangeRate: 0, // Placeholder, as API does not provide exchange rates
-        change24h: 0, // Placeholder, as API does not provide change values
-      }));
-      setTokensFromApi(tokensFromApi); // Store tokens from Kasplex
-    } catch (error) {
-      console.error('Error fetching tokens from Kasplex API:', error);
-      setTokensFromApi([]); // Reset tokens in case of error
-    }
-  };
-
-  // Fetch Kaspa balance once an account is selected
   useEffect(() => {
     let intervalId;
 
@@ -171,22 +193,16 @@ const Main: React.FC<MainProps> = ({ isLight, passcode, onSend, onReceive, onAct
       }
     };
 
-    // Initial fetch when component mounts
     fetchTokensPeriodically();
-
-    // Set interval for periodic fetching
     intervalId = setInterval(fetchTokensPeriodically, 30000); // 30 seconds
 
-    // Clean up the interval when the component is unmounted or the account changes
     return () => {
       clearInterval(intervalId);
     };
-  }, [selectedAccount]);
+  }, [selectedAccount, marketData]);
 
   const getTokenImage = (symbol: string) => {
     const token = tokensData.find(token => token.symbol.toLowerCase() === symbol.toLowerCase());
-
-    // Return the image if found, otherwise return undefined
     return token ? token.image : '';
   };
 
