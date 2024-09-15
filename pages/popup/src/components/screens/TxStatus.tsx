@@ -1,21 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const jsonUrl = '/popup/tokens.json';
 
-type Send2Props = {
+type TxStatusProps = {
   isLight: boolean;
   passcode: string;
   onBack: () => void;
-  onTxStatus: (
-    token: {
-      name: string;
-      symbol: string;
-      balance: number;
-      exchangeRate: number;
-    },
-    amount: number,
-    recipientAddress: string,
-  ) => void;
   selectedToken: {
     name: string;
     symbol: string;
@@ -24,6 +14,13 @@ type Send2Props = {
   };
   amount: number;
   recipientAddress: string;
+};
+
+const reduceKaspaAddress = (address: string): string => {
+  if (address.length > 20) {
+    return `${address.slice(0, 12)}...${address.slice(-10)}`;
+  }
+  return address;
 };
 
 const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -40,15 +37,7 @@ const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
 const estimatedFee = 0.003;
 const priorityFee = 0.001;
 
-const Send2: React.FC<Send2Props> = ({
-  isLight,
-  passcode,
-  onBack,
-  onTxStatus,
-  selectedToken,
-  amount,
-  recipientAddress,
-}) => {
+const TxStatus: React.FC<TxStatusProps> = ({ isLight, passcode, onBack, selectedToken, amount, recipientAddress }) => {
   const currentDate = new Date().toLocaleString(); // Get the current date and time
   const [tokensData, setTokensData] = useState<any[]>([]); // Store fetched token images
 
@@ -70,6 +59,22 @@ const Send2: React.FC<Send2Props> = ({
   };
 
   fetchTokensImages(); // Fetch token images when component mounts
+  const [txstatus, setTxStatus] = useState<'failed' | 'successful' | 'processing'>('processing');
+  const [dots, setDots] = useState<string>('.');
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | undefined;
+
+    if (txstatus === 'processing') {
+      interval = setInterval(() => {
+        setDots(prevDots => (prevDots.length < 3 ? prevDots + '.' : '.'));
+      }, 500);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [txstatus]);
 
   return (
     <div className="flex flex-col items-center justify-start w-full h-full p-4 pt-2 overflow-y-auto">
@@ -79,9 +84,17 @@ const Send2: React.FC<Send2Props> = ({
           onClick={onBack}>
           <img src="/popup/icons/back-arrow-2.svg" alt="Back" className="h-10 w-10" />
         </button>
-        <h1 className={`text-2xl font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>Send Details</h1>
+        <h1 className={`text-2xl font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>Transaction Status</h1>
       </div>
 
+      <div
+        className={`text-xl font-bold mt-2 text-center ${txstatus === 'successful' ? 'text-[#70C7BA]' : txstatus === 'failed' ? 'text-red-500' : 'text-[#70C7BA]'}`}>
+        {txstatus === 'processing'
+          ? `Processing${dots}`
+          : txstatus === 'successful'
+            ? 'Transaction Successful'
+            : 'Transaction Failed'}
+      </div>
       <img
         src={getTokenImage(selectedToken.symbol) || 'invalid-url'}
         alt={selectedToken.name}
@@ -111,26 +124,24 @@ const Send2: React.FC<Send2Props> = ({
         <div
           className={`text-sm mt-2 ${isLight ? 'text-gray-900' : 'text-gray-200'} text-center mx-auto`}
           style={{ maxWidth: '80%' }}>
-          <span className="font-bold">To be Sent to:</span>
-          <p className="break-all">{recipientAddress}</p>
+          <span className="font-bold">Sent to:</span>
+          <p className="break-all">{reduceKaspaAddress(recipientAddress)}</p>
         </div>
 
-        <div className={`text-base font-bold mt-2 ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>{currentDate}</div>
+        <div className={`text-base font-bold mb-2 mt-2 ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
+          9/14/2024, 8:16:39 PM
+        </div>
       </div>
 
       <button
         className={`w-full text-base p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
           isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
         } hover:scale-105`}
-        onClick={() => {
-          if (selectedToken && amount > 0 && recipientAddress) {
-            onTxStatus(selectedToken, amount, recipientAddress);
-          }
-        }}>
-        Confirm
+        onClick={onBack}>
+        Close
       </button>
     </div>
   );
 };
 
-export default Send2;
+export default TxStatus;
