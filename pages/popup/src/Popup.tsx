@@ -11,6 +11,7 @@ import Import from '@src/components/screens/Import';
 import Receive from '@src/components/screens/Receive';
 import Send1 from '@src/components/screens/Send1';
 import Send2 from '@src/components/screens/Send2';
+import TxStatus from '@src/components/screens/TxStatus';
 import Settings from '@src/components/screens/Settings';
 import Actions from '@src/components/screens/Actions';
 import Accounts from '@src/components/screens/Accounts';
@@ -39,6 +40,7 @@ enum Screen {
   Receive,
   Send1,
   Send2,
+  TxStatus,
   Settings,
   Actions,
   Accounts,
@@ -92,6 +94,13 @@ const Popup = () => {
     setAmount(amount);
     setRecipientAddress(address);
     setCurrentScreen(Screen.Send2);
+  };
+
+  const handleTxStatus = (token: any, amount: number, address: string) => {
+    setSelectedToken(token);
+    setAmount(amount);
+    setRecipientAddress(address);
+    setCurrentScreen(Screen.TxStatus);
   };
 
   const handleCreateWallet = () => {
@@ -278,6 +287,18 @@ const Popup = () => {
             isLight={isLight}
             passcode={passcode}
             onBack={() => setCurrentScreen(Screen.Send1)}
+            onTxStatus={handleTxStatus}
+            selectedToken={selectedToken}
+            amount={amount}
+            recipientAddress={recipientAddress}
+          />
+        );
+      case Screen.TxStatus:
+        return (
+          <TxStatus
+            isLight={isLight}
+            passcode={passcode}
+            onBack={() => setCurrentScreen(Screen.Main)}
             selectedToken={selectedToken}
             amount={amount}
             recipientAddress={recipientAddress}

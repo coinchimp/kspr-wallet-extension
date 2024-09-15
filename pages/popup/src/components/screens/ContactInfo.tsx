@@ -51,6 +51,15 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ isLight, onBack }) => {
           {contactWalletAddress}
         </p>
       </div>
+      <div className="w-full mt-8">
+        <button
+          className={`w-full text-base mb-6 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
+            isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
+          } hover:scale-105`}
+          onClick={onBack}>
+          Delete Contact
+        </button>
+      </div>
     </div>
   );
 };
