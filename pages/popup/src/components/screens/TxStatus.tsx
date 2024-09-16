@@ -16,6 +16,9 @@ type TxStatusProps = {
   recipientAddress: string;
 };
 
+const kaspaExplorer = 'https://explorer-tn10.kaspa.org';
+const transactionId = '1eac8bc8013fe0a3c7fc112be233186a06c77015f71d13c91138e9af70474708';
+
 const reduceKaspaAddress = (address: string): string => {
   if (address.length > 20) {
     return `${address.slice(0, 12)}...${address.slice(-10)}`;
@@ -86,40 +89,32 @@ const TxStatus: React.FC<TxStatusProps> = ({ isLight, passcode, onBack, selected
         </button>
         <h1 className={`text-2xl font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>Transaction Status</h1>
       </div>
-
-      <div
-        className={`text-xl font-bold mt-2 text-center ${txstatus === 'successful' ? 'text-[#70C7BA]' : txstatus === 'failed' ? 'text-red-500' : 'text-[#70C7BA]'}`}>
-        {txstatus === 'processing'
-          ? `Processing${dots}`
-          : txstatus === 'successful'
-            ? 'Transaction Successful'
-            : 'Transaction Failed'}
-      </div>
       <img
         src={getTokenImage(selectedToken.symbol) || 'invalid-url'}
         alt={selectedToken.name}
         className="h-16 w-16 my-4 rounded-full object-cover"
         onError={handleImageError}
       />
-
+      <div
+        className={`text-xl font-bold mb-2 text-center ${txstatus === 'successful' ? 'text-[#70C7BA]' : txstatus === 'failed' ? 'text-red-500' : 'text-[#70C7BA]'}`}>
+        {txstatus === 'processing'
+          ? `Processing${dots}`
+          : txstatus === 'successful'
+            ? 'Transaction Successful'
+            : 'Transaction Failed'}
+      </div>
       <div className="text-center mb-2">
         <div className={`text-2xl font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
           {new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount)}{' '}
           {selectedToken.symbol}
         </div>
-        <div className={`text-lg ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
+        {/* <div className={`text-lg ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
           {selectedToken.exchangeRate
             ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
                 amount * selectedToken.exchangeRate,
               )
             : '$-'}
-        </div>
-
-        {/* Add Estimated Fee and Priority Fee */}
-        <div className={`text-sm mt-2 ${isLight ? 'text-gray-900' : 'text-gray-200'} text-center`}>
-          <p>Estimated Fee: {estimatedFee.toFixed(3)} KAS</p>
-          <p>Priority Fee: {priorityFee.toFixed(3)} KAS</p>
-        </div>
+        </div> */}
 
         <div
           className={`text-sm mt-2 ${isLight ? 'text-gray-900' : 'text-gray-200'} text-center mx-auto`}
@@ -127,18 +122,16 @@ const TxStatus: React.FC<TxStatusProps> = ({ isLight, passcode, onBack, selected
           <span className="font-bold">Sent to:</span>
           <p className="break-all">{reduceKaspaAddress(recipientAddress)}</p>
         </div>
-
-        <div className={`text-base font-bold mb-2 mt-2 ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
-          9/14/2024, 8:16:39 PM
-        </div>
       </div>
-
+      {/* <div
+              className={`w-full text-sm font-bold relative flex justify-between items-center p-3 mb-2 rounded-lg cursor-pointer transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'} `}
+              onClick={() => window.open(`${kaspaExplorer}/txs/${transactionId}`, '_blank')}>
+              Check on Kaspa Explorer  
+      </div>                */}
       <button
-        className={`w-full text-base p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
-          isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
-        } hover:scale-105`}
-        onClick={onBack}>
-        Close
+        className={`w-full text-base p-3 mt-2 rounded-lg font-bold transition duration-300 ease-in-out ${isLight ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-800 hover:bg-gray-700'} hover:scale-105`}
+        onClick={() => window.open(`${kaspaExplorer}/txs/${transactionId}`, '_blank')}>
+        Check on Kaspa Explorer
       </button>
     </div>
   );
