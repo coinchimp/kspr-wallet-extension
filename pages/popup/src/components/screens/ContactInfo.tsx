@@ -13,7 +13,8 @@ const getRandomTurquoiseColor = () => {
 };
 
 const ContactInfo: React.FC<ContactInfoProps> = ({ isLight, onBack }) => {
-  const contactName = 'Alice';
+  //const contactName = 'Alice';
+  const [contactName, setContactName] = useState('Alice');
   const contactWalletAddress = 'kaspatest:qr63dcf5mfexwg9kcx77gr6pgcy099m3963geaa4ed7pva2u9vcsk8583qkcl';
   return (
     <div className="flex flex-col items-center justify-start w-full h-full p-3 pt-1 overflow-y-auto">
@@ -36,9 +37,13 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ isLight, onBack }) => {
         <label className={`block mb-2 text-base font-bold ${isLight ? 'text-gray-900' : 'text-gray-200'}`}>
           Contact Name
         </label>
-        <p className={`p-3 rounded-lg ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}>
-          {contactName}
-        </p>
+        <input
+          type="text"
+          value={contactName}
+          onChange={e => setContactName(e.target.value)}
+          style={{ outline: 'none' }}
+          className={`w-full p-3 rounded-lg ${isLight ? 'bg-gray-100 text-gray-900' : 'bg-gray-800 text-gray-200'}`}
+        />
       </div>
 
       <div className="w-full mb-4">
@@ -51,11 +56,16 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ isLight, onBack }) => {
           {contactWalletAddress}
         </p>
       </div>
-      <div className="w-full mt-8">
+      <div className="w-full mt-2">
         <button
-          className={`w-full text-base mb-6 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
+          className={`w-full text-base mb-3 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${
             isLight ? 'bg-[#70C7BA] text-white shadow-black' : 'bg-[#70C7BA] text-white'
           } hover:scale-105`}
+          onClick={onBack}>
+          Save
+        </button>
+        <button
+          className={`w-full text-base mb-2 p-3 rounded-lg font-bold transition duration-300 ease-in-out ${isLight ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-red-500 text-white hover:bg-red-600'} hover:scale-105`}
           onClick={onBack}>
           Delete Contact
         </button>
