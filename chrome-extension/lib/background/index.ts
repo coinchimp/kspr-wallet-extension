@@ -12,9 +12,6 @@ exampleThemeStorage.get().then(theme => {
 let rpcClient: any = null;
 let wasmInitialized = false;
 const SOMPI_MULTIPLIER = BigInt(100000000);
-const testnetRpcUrlsEU = ['https://1.rpc-kspr.eu', 'https://2.rpc-kspr.eu', 'https://3.rpc-kspr.eu', 'https://4.rpc-kspr.eu'];
-const testnetRpcUrlsUS = ['https://1.rpc-kspr.us', 'https://2.rpc-kspr.us', 'https://3.rpc-kspr.us'];
-let testnetRpcUrls: string[] = [];
 
 async function setupUtxoProcessorEventListeners(utxoProcessor: any, accountIndex: number) {
   utxoProcessor.addEventListener(async (event: any) => {
@@ -39,48 +36,12 @@ async function setupUtxoProcessorEventListeners(utxoProcessor: any, accountIndex
   });
 }
 
-async function ping(url: string, timeout = 5000): Promise<number> {
-  const controller = new AbortController();
-  const signal = controller.signal;
-
-  const start = Date.now();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
-
-  try {
-    const response = await fetch(url, { signal });
-    if (response.ok) {
-      const end = Date.now();
-      clearTimeout(timeoutId);
-      return end - start; // Return ping time in milliseconds
-    }
-    throw new Error(`Failed to ping ${url}`);
-  } catch (error) {
-    console.error(error);
-    clearTimeout(timeoutId);
-    return Infinity; // Return a very high ping time if error occurs
-  }
-}
 
 function getRandomUrl(urls: string[]): string {
   const randomIndex = Math.floor(Math.random() * urls.length);
   return urls[randomIndex];
 }
 
-async function compareRpcPings() {
-  const randomEuRpc = getRandomUrl(testnetRpcUrlsEU);
-  const randomUsRpc = getRandomUrl(testnetRpcUrlsUS);
-
-  const euPing = await ping(randomEuRpc.concat('/v2/kaspa/testnet-10/tls/wrpc/borsh'));
-  const usPing = await ping(randomUsRpc.concat('/v2/kaspa/testnet-10/tls/wrpc/borsh'));
-
-  console.log(`EU RPC Ping: ${euPing} ms, US RPC Ping: ${usPing} ms`);
-
-  if (euPing < usPing) {
-    testnetRpcUrls = [...testnetRpcUrlsEU];
-  } else {
-    testnetRpcUrls = [...testnetRpcUrlsUS];
-  }
-}
 
 async function ensureWasmModuleInitialized() {
   if (!wasmInitialized) {
@@ -107,18 +68,11 @@ async function ensureWasmModuleInitialized() {
 
 async function ensureRpcClientConnected() {
   try {
-    if (testnetRpcUrls.length == 0) {
-      await compareRpcPings();
-      console.log('Selected RPC URLs:', testnetRpcUrls);
-    }
     if (!rpcClient || !rpcClient.isConnected) {
       console.log('RPC client not connected, initializing...');
       await ensureWasmModuleInitialized();
       rpcClient = new kaspa.RpcClient({
-        resolver: new kaspa.Resolver({
-          urls: testnetRpcUrls,
-          tls: true,
-        }),
+        resolver: new kaspa.Resolver(),
         networkId: 'testnet-10',
       });
 
@@ -142,10 +96,7 @@ async function updateRpcClient(networkId: string) {
 
     await ensureWasmModuleInitialized();
     rpcClient = new kaspa.RpcClient({
-      resolver: new kaspa.Resolver({
-        urls: networkId === 'testnet-10' ? testnetRpcUrls : [],
-        tls: true,
-      }),
+      resolver: new kaspa.Resolver(),
       networkId: networkId,
     });
 
