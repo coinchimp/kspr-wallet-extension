@@ -66,7 +66,6 @@ const Import: React.FC<{ isLight: boolean; onImport: (passcode: string) => void 
       if (accounts && accounts.length > 0) {
         const encryptedSeed = await encryptData(passcode, seedPhrase);
         await encryptedSeedStorage.set(() => encryptedSeed);
-        toast.success('Wallet imported successfully.');
         onImport(passcode); // Pass the passcode to the parent component after a successful import
       } else {
         toast.error('Failed to generate accounts from the seed phrase.');
