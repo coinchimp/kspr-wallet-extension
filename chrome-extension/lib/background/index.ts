@@ -3,7 +3,8 @@ import { exampleThemeStorage } from '@extension/storage';
 import { passcodeStorage } from '@extension/storage';
 import { accountsStorage } from '@extension/storage';
 import * as kaspa from '../../public/kaspa/kaspa';
-const { PublicKeyGenerator, createAddress, NetworkType, XPrv, Mnemonic, UtxoContext, UtxoEntryReference } = kaspa;
+const { PublicKeyGenerator, PrivateKeyGenerator, createAddress, NetworkType, XPrv, Mnemonic, UtxoContext, UtxoEntryReference, Transaction, TransactionOutput,
+        signTransaction, Address, payToAddressScript, encryptXChaCha20Poly1305, decryptXChaCha20Poly1305, calculateTransactionMass } = kaspa;
 
 exampleThemeStorage.get().then(theme => {
   console.log('theme', theme);
@@ -35,13 +36,6 @@ async function setupUtxoProcessorEventListeners(utxoProcessor: any, accountIndex
     }
   });
 }
-
-
-function getRandomUrl(urls: string[]): string {
-  const randomIndex = Math.floor(Math.random() * urls.length);
-  return urls[randomIndex];
-}
-
 
 async function ensureWasmModuleInitialized() {
   if (!wasmInitialized) {
@@ -131,6 +125,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       } else if (message.type === 'LOCK') {
         await lock()
         sendResponse({ lock: true });
+      } else if (message.type === 'SEND') {
+        const accounts = await accountsStorage.getAccounts();
+        const passcodeData = await passcodeStorage.getPasscode();
+        const res = await transferKAS(accounts[0].address, "kaspatest:qr0gskdc3nekflse693ukz0ckg6mqzz9nql2htvl08rw2qu0epl8s2lptp06k", 5, 1, decryptXChaCha20Poly1305(accounts[0].privateKey, passcodeData))
+        console.log(res);
+        sendResponse(res);
       }else {
         sendResponse({ error: 'Unknown message type' });
       }
@@ -161,6 +161,7 @@ async function getAndStoreAccounts(seed: string, numAccounts: number = 16) {
   const networkType = NetworkType.Testnet;
   const mnemonic = new Mnemonic(seed);
   const xPrv = new XPrv(mnemonic.toSeed());
+  const privateKeyGen = new PrivateKeyGenerator(xPrv.intoString('kprv'), false, BigInt(0));
   const accounts = [];
   const SCANNING_WINDOW = 64;
   const MAX_SCANS = 256;
@@ -177,6 +178,8 @@ async function getAndStoreAccounts(seed: string, numAccounts: number = 16) {
   for (let accountIndex = 0; accountIndex < numAccounts; accountIndex++) {
     console.log(`Processing account #${accountIndex}...`);
     const xpub = PublicKeyGenerator.fromMasterXPrv(xPrv.intoString('kprv'), false, BigInt(accountIndex));
+    const passcodeData = await passcodeStorage.getPasscode();
+    const privateKey = encryptXChaCha20Poly1305(privateKeyGen.receiveKey(accountIndex).toString(), passcodeData)
 
     let lastUsedReceiveIndex = -1;
     let lastUsedChangeIndex = -1;
@@ -229,6 +232,7 @@ async function getAndStoreAccounts(seed: string, numAccounts: number = 16) {
         accounts.push({
           name: `Account #${accountIndex + 1}`,
           address: receiveAddresses[0],
+          privateKey: privateKey,
           balance: balance,
           utxoCount: matureUtxos.length,
           receiveAddresses,
@@ -270,6 +274,7 @@ async function getAndStoreAccounts(seed: string, numAccounts: number = 16) {
         accounts.push({
           name: `Account #${accountIndex + 1}`,
           address: receiveAddresses[0],
+          privateKey: privateKey,
           balance: 0,
           utxoCount: 0,
           receiveAddresses,
@@ -330,6 +335,160 @@ async function trackAddressesWithTimeout(
     }),
   ]);
 }
+
+async function transferKAS(fromAddress: string, toAddress: string, amount: number, feeRate: number, privateKey: string) {
+  try {
+    await ensureRpcClientConnected();
+
+    const amountSompi = toSompi(amount);
+    const utxos = (await rpcClient.getUtxosByAddresses([fromAddress])).entries.map((entry: { entry: kaspa.UtxoEntryReference }) => entry.entry);
+    if (!utxos.length) throw new Error('No UTXOs available to spend.');
+
+    const { inputs, totalInputValue, utxoEntries } = await selectUtxos(utxos, amountSompi);
+
+    const recipientScriptPublicKey = payToAddressScript(new Address(toAddress));
+    const fromScriptPublicKey = payToAddressScript(new Address(fromAddress));
+    
+    const outputs = [new TransactionOutput(amountSompi, recipientScriptPublicKey)];
+    const feeSompiEstimate = BigInt(Math.round(2000 * feeRate));
+    const totalAmountEstimate = amountSompi + feeSompiEstimate;
+
+    if (totalInputValue < totalAmountEstimate) throw new Error('Insufficient funds for the transaction.');
+
+    const changeSompiEstimate = totalInputValue - totalAmountEstimate;
+    const outputsForMassCalculation = [...outputs, ...(changeSompiEstimate > BigInt(0) ? [new TransactionOutput(changeSompiEstimate, fromScriptPublicKey)] : [])];
+
+    // Create unsigned transaction with mandatory fields
+    const unsignedTx: kaspa.ITransaction = {
+      version: 0,
+      inputs,
+      outputs: outputsForMassCalculation,
+      lockTime: BigInt(0),
+      subnetworkId: "0000000000000000000000000000000000000000",
+      gas: BigInt(0),
+      payload: ''
+    };
+
+    const mass = calculateMass(unsignedTx);
+    const feeSompi = BigInt(Math.round(mass * feeRate));
+    const totalAmountSompi = amountSompi + feeSompi;
+
+    if (totalInputValue < totalAmountSompi) throw new Error('Insufficient funds for the transaction.');
+
+    const changeSompi = totalInputValue - totalAmountSompi;
+    if (changeSompi > BigInt(0)) outputs.push(new TransactionOutput(changeSompi, fromScriptPublicKey));
+
+    // Check if UTXOs are being used in the mempool
+    const mempoolEntriesResponse: kaspa.IGetMempoolEntriesByAddressesResponse = await rpcClient.getMempoolEntriesByAddresses({
+      addresses: [fromAddress], includeOrphanPool: true, filterTransactionPool: false
+    });
+    const mempoolEntries = mempoolEntriesResponse.entries;
+
+    // Extract previous outpoints from valid mempool transactions
+    const utxosInMempool = mempoolEntries
+      .filter((entry: kaspa.IMempoolEntry) => entry.transaction && entry.transaction.inputs)
+      .map((entry: kaspa.IMempoolEntry) => entry.transaction.inputs.map((input: any) => input.previousOutpoint))
+      .flat();
+
+    const shouldReplace = inputs.some(input => utxosInMempool.includes(input.previousOutpoint));
+
+    const transaction = new Transaction({
+      version: 0,
+      inputs,
+      outputs,
+      lockTime: BigInt(0),
+      subnetworkId: "0000000000000000000000000000000000000000",
+      gas: BigInt(0),
+      payload: ''
+    });
+
+    const signedTx = signTransaction(transaction, [privateKey], false);
+    
+    let txId;
+    if (shouldReplace) {
+      // Submit transaction as a replacement
+      const res = await rpcClient.submitTransactionReplacement(signedTx);
+      txId = res.transactionId;
+      console.log(`Replacement transaction submitted, txId: ${txId}`);
+    } else {
+      // Submit the transaction normally
+      txId = await rpcClient.submitTransaction(signedTx);
+      console.log(`Transaction successfully sent, txId: ${txId}`);
+    }
+
+    return { success: true, txId };
+
+  } catch (error) {
+    console.error('Error transferring KAS:', error);
+    return { success: false, error };
+  }
+}
+
+
+// Helper function to select UTXOs based on the Rust logic
+async function selectUtxos(utxos: kaspa.UtxoEntryReference[], amountSompi: bigint, maxUtxos: number = 80) {
+  utxos.sort((a, b) => Number(b.amount - a.amount));
+
+  let inputs: kaspa.ITransactionInput[] = [];
+  let utxoEntries: kaspa.UtxoEntryReference[] = [];
+  let totalInputValue = BigInt(0);
+
+  if (utxos.length > 1) {
+    const largestUtxo = utxos[0];
+    const smallestUtxo = utxos[utxos.length - 1];
+    const combinedAmount = largestUtxo.amount + smallestUtxo.amount;
+
+    if (combinedAmount >= amountSompi) {
+      inputs.push(createTransactionInput(largestUtxo, BigInt(0)));
+      utxoEntries.push(largestUtxo);
+      totalInputValue += largestUtxo.amount;
+
+      inputs.push(createTransactionInput(smallestUtxo, BigInt(1)));
+      utxoEntries.push(smallestUtxo);
+      totalInputValue += smallestUtxo.amount;
+      
+      return { inputs, totalInputValue, utxoEntries };
+    }
+  }
+
+  for (let i = 0; i < utxos.length && inputs.length < maxUtxos; i++) {
+    if (inputs.length >= maxUtxos) {
+      throw new Error('Too many UTXOs, please compound or send a lower amount');
+    }
+
+    const utxo = utxos[i];
+
+    inputs.push(createTransactionInput(utxo, BigInt(i)));
+    utxoEntries.push(utxo);
+    totalInputValue += utxo.amount;
+
+    if (totalInputValue >= amountSompi) break;
+  }
+
+  if (totalInputValue < amountSompi) {
+    throw new Error('Insufficient funds to send transaction');
+  }
+
+  return { inputs, totalInputValue, utxoEntries };
+}
+
+// Helper function to create transaction input from UTXO
+function createTransactionInput(utxo: kaspa.UtxoEntryReference, sequence: bigint): kaspa.ITransactionInput {
+  return {
+    previousOutpoint: utxo.outpoint,
+    sequence,
+    sigOpCount: 1,
+    utxo,
+  };
+}
+
+// Helper function to calculate the mass of the transaction
+function calculateMass(tx: kaspa.ITransaction): number {
+  const mass = Number(calculateTransactionMass('testnet-10', tx, 1));
+  if (mass > 100000) throw new Error(`Transaction mass (${mass}) exceeds the maximum allowed limit of 100,000.`);
+  return mass;
+}
+
 
 // Initialize Wasm and RPC client at startup
 ensureRpcClientConnected()
