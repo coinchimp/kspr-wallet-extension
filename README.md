@@ -30,10 +30,6 @@
     - [Procedures](#procedures)
         - [Chrome](#chrome)
         - [Firefox](#firefox)
-- [Community](#community)
-- [Reference](#reference)
-- [Star History](#starhistory)
-- [Contributors](#contributors)
 
 ## Intro <a name="intro"></a>
 
